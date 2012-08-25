@@ -346,12 +346,12 @@
 				exec : function (self) {
 					if (!self.FontSizeWrapDom || self.FontSizeWrapDom.length === 0) {
 						var html = '\
-														<div class="fontSizeWrap">\
-															<a btntype="btnFontSizeAction" size="1" style="font-size:12px;" href="javascript:;" title="小号" unselectable="on">小号</a>\
-															<a btntype="btnFontSizeAction" size="2" style="font-size:14px;" href="javascript:;" title="标准" unselectable="on">标准</a>\
-															<a btntype="btnFontSizeAction" size="3" style="font-size:16px;" href="javascript:;" title="大号" unselectable="on">大号</a>\
-															<a btntype="btnFontSizeAction" size="4" style="font-size:18px;" href="javascript:;" title="特大" unselectable="on">特大</a>\
-														</div>';
+<div class="fontSizeWrap">\
+	<a btntype="btnFontSizeAction" size="1" style="font-size:12px;" href="javascript:;" title="小号" unselectable="on">小号</a>\
+	<a btntype="btnFontSizeAction" size="2" style="font-size:14px;" href="javascript:;" title="标准" unselectable="on">标准</a>\
+	<a btntype="btnFontSizeAction" size="3" style="font-size:16px;" href="javascript:;" title="大号" unselectable="on">大号</a>\
+	<a btntype="btnFontSizeAction" size="4" style="font-size:18px;" href="javascript:;" title="特大" unselectable="on">特大</a>\
+</div>';
 						var config = self.config;
 						$('#' + config.toolbarId).append(html);
 						self.FontSizeWrapDom = $('#' + config.toolbarId + ' .fontSizeWrap');
