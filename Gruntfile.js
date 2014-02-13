@@ -11,7 +11,6 @@ module.exports = function (grunt) {
                 jQuery: true
               }
             },
-            beforeconcat: ['src/*.js'],
             afterconcat: ['dist/ubb_editor.js']
         },
         concat: {

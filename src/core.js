@@ -1,8 +1,4 @@
-/**
-  * Author: luyao water2212683@gmail.com
-  * 使用方式$('#textarea').ubb_editor();
-  */
-(function ($) {
+
     var default_config = {
         color : [],//[{val:'333333',alt:'black'},...]
         size : [],
@@ -437,4 +433,3 @@
         }
         return html
     }
-})(jQuery)
