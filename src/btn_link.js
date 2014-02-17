@@ -1,13 +1,13 @@
-$.ubb_editor.set_config('btn_link'
+$.ubb_editor.set_config('btn_link',
     {
-        show : function(self){
-            if (!self.BaobeiWrapDom || self.BaobeiWrapDom.length == 0) {
-                var link_dialog_html = ''+
-                    '<div class="baobeiWrap">'+
+        show_panel : function(editor){
+            if (editor.find('.ubb_link_panel') === 0) {
+                var link_panel_html = 
+                    '<div class="ubb_link_panel">'+
                         '<div class="con">'+
                             '<p class="title">将网址粘贴到下面框中：</p>'+
                             '<div class="sg-form">'+
-                                '<a class="confirm_btn" href="javascript:;" btntype="btnLinkAction">确定</a>'+
+                                '<a class="confirm_btn" href="javascript:;" data-onclick="exec" data-name="btn_link">确定</a>'+
                                 '<label class="input_text sg-input">'+
                                 '<input value="" placeholder="http://" autocomplete="off">'+
                                 '</label>'+
@@ -19,30 +19,17 @@ $.ubb_editor.set_config('btn_link'
                             '</div>'+
                         '</div>'+
                     '</div>';
-                $('#' + self.config.toolbarId).append(link_dialog_html);
-                if (self.curVisiableDom) {
-                    self.curVisiableDom.hide();
-                }
-                self.BaobeiWrapDom = $('#' + self.config.toolbarId + ' .baobeiWrap');
-                self.curVisiableDom = self.BaobeiWrapDom;
+                editor.add_panel(link_dialog_html);
             } else {
-                if (self.curVisiableDom == self.BaobeiWrapDom) {
-                    self.BaobeiWrapDom.hide();
-                    self.curVisiableDom = null;
-                } else {
-                    if (self.curVisiableDom)
-                        self.curVisiableDom.hide();
-                    self.BaobeiWrapDom.show();
-                    self.curVisiableDom = self.BaobeiWrapDom;
-                }
+                editor.toggle_panel('.ubb_link_panel');
             }
         },
         html :  '<div class="font-btns font-link">'+
-                    '<a href="javascript:;" btntype="btnLink" title="链接" unselectable="on">链接</a>'+
+                    '<a href="javascript:;" data-onclick="show_panel" data-name="btn_link" title="链接" unselectable="on">链接</a>'+
                 '</div>',
-        exec : function (self, $srcElement) {
-            var url = $srcElement.siblings('label').find('input').val();
-            if(url == "http://" || url == "") {
+        exec : function (editor) {
+            var url = editor.find('.ubb_link_panel input').val();
+            if(url === "http://" || url === "") {
                 if(alert_fail){
                     alert_fail("请输入一个链接");
                 }else{
@@ -66,7 +53,7 @@ $.ubb_editor.set_config('btn_link'
                 }
                 return false;
             }
-            self.execCommand("createlink", url);
+            editor.exec_command("createlink", url);
             /* 如果需要给链接添加target title
             var tmp = 'javascript:;';
             var dom_a = self('A','href',tmp);
@@ -78,8 +65,7 @@ $.ubb_editor.set_config('btn_link'
                 });
             }
             */
-            self.curVisiableDom.hide();
-            self.curVisiableDom = null;
+            editor.hide_panel();
         }
     }
 );

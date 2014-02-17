@@ -1,94 +1,87 @@
-$.ubb_editor.set_config('btn_color'
+$.ubb_editor.set_config('btn_color',
     {
-        show : function (self) {
-            if (!self.FontColoWrapDom || self.FontColoWrapDom.length == 0) {
-                var html = '<div class="fontColoWrap">';
-                var length = COLOR.length;
+        show_panel : function (editor) {
+            if (editor.find('.ubb_color_panel').length === 0) {
+                var html = '<div class="ubb_color_panel">';
+                var length = editor.color.length;
                 for (var i = 0; i < length; i++) {
-                    html += '<a data-type="exec" coloval="#' + COLOR[i].key + '" style="background-color:#' + COLOR[i].key + ';" href="javascript:;" title="' + COLOR[i].val + '" unselectable="on">#' + COLOR[i].key + '</a>'
+                    html += '<a data-onclick="exec" data-name="btn_color" data-color="#' + editor.color[i].val + '" style="background-color:#' + editor.color[i].val + ';" href="javascript:;" title="' + editor.color[i].alt + '" unselectable="on">#' + editor.color[i].val + '</a>';
                 }
                 html += '</div>';
-                $('#' + self.config.toolbarId).append(html);
-                self.FontColoWrapDom = $('#' + self.config.toolbarId + ' .fontColoWrap');
-                if (self.curVisiableDom) {
-                    self.curVisiableDom.hide();
-                }
-                self.curVisiableDom = self.FontColoWrapDom;
+                editor.add_panel(html);
             } else {
-                if (self.curVisiableDom == self.FontColoWrapDom) {
-                    self.FontColoWrapDom.hide();
-                    self.curVisiableDom = null;
-                } else {
-                    if (self.curVisiableDom)
-                        self.curVisiableDom.hide();
-                    self.FontColoWrapDom.show();
-                    self.curVisiableDom = self.FontColoWrapDom;
-                }
+                editor.toggle_panel('.ubb_color_panel');
             }
         },
-        selectionStyleFun : function (self, curElm, $parents) {
-            var tagName = curElm.nodeName.toLowerCase();
-            var val = null;
+        onselected : function (editor, selection_text_container, $parents) {
+            var tag_name = selection_text_container.nodeName.toLowerCase();
+            var cur_color = null;
             var reg_css = /color\:/i;
             var reg_rgb = /rgb\(\s?(\d{1,3})\,\s?(\d{1,3})\,\s?(\d{1,3})\)/i;
-            var outerHTML = curElm.outerHTML.match(/\<[^\>]+\>/)[0];
-            var attrColor = $(curElm).attr("color");
-            if (attrColor) {
-                val = attrColor;
+            var outerHTML = selection_text_container.outerHTML.match(/<[^>]+>/)[0];
+            var attr_color = $(selection_text_container).attr('color');
+            var Rgb2Hex = function(rgb){
+                if(!rgb && rgb.length !== 3){
+                    return rgb;
+                }
+                var Hex = "#";
+                var int16 = '';
+                for(var i=0; i<3; i++){
+                    int16 = Number(rgb[i]).toString(16);
+                    Hex += (int16.length === 1?'0':'')+int16;
+                }
+                return Hex;
+            };
+            var rgbArr;
+            if (attr_color) {
+                cur_color = attr_color;
             } else if (reg_css.test(outerHTML)) {
-                var rgbArr = outerHTML.match(reg_rgb);
+                rgbArr = outerHTML.match(reg_rgb);
                 if (rgbArr) {
-                    var hex = RGB2HEX["_" + ];
-                    val = Rgb2Hex([rgbArr[1], rgbArr[2], rgbArr[3]]);
+                    cur_color = Rgb2Hex([rgbArr[1], rgbArr[2], rgbArr[3]]);
                 }
                 //to do reg hex
             }
-            if (!val && $parents) {
-                var length = $parents.length
-                    for (var i = 0; i < length; i++) {
-                        var curDom = $parents[i];
-                        var tagName = curDom.nodeName.toLowerCase();
-                        var outerHTML = curDom.outerHTML.match(/\<[^\>]+\>/)[0];
-                        var attrColor = $(curDom).attr("color");
-                        if (attrColor) {
-                            val = attrColor;
-                        } else if (reg_css.test(outerHTML)) {
-                            var rgbArr = outerHTML.match(reg_rgb);
-                            if (rgbArr) {
-                                val = Rgb2Hex([rgbArr[1], rgbArr[2], rgbArr[3]]);
-                            }
-                            //to do reg style hex
+            var parent;
+            if (!cur_color && $parents) {
+                var length = $parents.length;
+                for (var i = 0; i < length; i++) {
+                    parent = $parents[i];
+                    tag_name = parent.nodeName.toLowerCase();
+                    outerHTML = parent.outerHTML.match(/<[^>]+>/)[0];
+                    attr_color = $(parent).attr("color");
+                    if (attr_color) {
+                        cur_color = attr_color;
+                    } else if (reg_css.test(outerHTML)) {
+                        rgbArr = outerHTML.match(reg_rgb);
+                        if (rgbArr) {
+                            cur_color = Rgb2Hex([rgbArr[1], rgbArr[2], rgbArr[3]]);
                         }
-                        if (val) {
-                            break;
-                        }
+                        //to do reg style hex
                     }
+                    if (cur_color) {
+                        break;
+                    }
+                }
             }
             if (!self.curFontColor) {
                 self.curFontColor = null;
             }
-            if (val != self.curFontColor) {
-                if (val == null) {
-                    $('#' + self.config.toolbarId + ' .font-colo i').css("background-color", "#333333");
-                    self.curFontColor = null;
-                } else {
-                    $('#' + self.config.toolbarId + ' .font-colo i').css("background-color", val);
-                    self.curFontColor = val;
-                }
+            if (cur_color === null) {
+                cur_color = '#333333';
             }
+            editor.find('font-color i').css('background-color',cur_color);
         },
-        html :  '<div class="font-btns font-colo">'+
-                    '<a href="javascript:;" data-type="show" title="前景色" unselectable="on">'+
+        html :  '<div class="font-btns font-color">'+
+                    '<a href="javascript:;" data-onclick="show_panel" data-name="btn_color" title="前景色" unselectable="on">'+
                         '<span unselectable="on"><i unselectable="on"></i></span>'+
                     '</a>'+
                 '</div>',
-        exec : function (self, $srcElement) {
-            var color = $srcElement.attr("coloval");
-            self.execCommand("forecolor", color);
-            $('#' + self.config.toolbarId + ' .font-colo i').css('background-color', $srcElement.attr('coloval'));
-            self.curFontColor = color;
-            self.curVisiableDom.hide();
-            self.curVisiableDom = null;
+        exec : function (editor, target_button) {
+            var color = $(target_button).data("color");
+            editor.exec_command("forecolor", color);
+            editor.find('.font-colo i').css('background-color',color);
+            editor.hide_panel();
         }
     }
 );

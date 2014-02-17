@@ -16,11 +16,29 @@ module.exports = function (grunt) {
         concat: {
             options: {
                 stripBanners: true,
-                banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
-                    '<%= grunt.template.today("yyyy-mm-dd") %> */'
+                banner: '' +
+                    '/**\r\n'+
+                    '  * ! <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %>\r\n'+
+                    '  * Author: luyao water2212683@gmail.com\r\n'+
+                    '  * 使用方式$(\'#textarea\').ubb_editor();\r\n'+
+                    '  */\r\n'
             },
             dist: {
-                src: ['ubb-editor/src/font.js','ubb-editor/src/paste.js'],
+                src: [
+                    'src/intro.js',
+                    'src/core.js',
+                    'src/key_map.js',
+                    'src/paste.js',
+                    'src/ubb_map.js',
+                    'src/ubb_to_html.js',
+                    'src/html_to_ubb.js',
+                    'src/outro.js',
+                    'src/btn_bold.js',
+                    'src/btn_color.js',
+                    'src/btn_size.js',
+                    'src/btn_link.js',
+                    'src/btn_split.js'
+                ],
                 dest: 'dist/ubb_editor.js'
             }
         }
@@ -29,6 +47,6 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.registerTask('default', ['concat']);
+  grunt.registerTask('default', ['concat','jshint']);
   grunt.registerTask('ubb_concat', ['concat']);
 }

@@ -1,50 +1,52 @@
-$.ubb_editor.set_config('btn_bold'
+$.ubb_editor.set_config('btn_bold',
     {
-        exec : function (self, $srcElement) {
-            if ($srcElement.parent().hasClass("font-bold-active")) {
-                $('#' + self.config.toolbarId + ' .font-bold').removeClass("font-bold-active");
+        exec : function (editor) {
+            var $button = editor.find('font-bold a');
+            if ($button.hasClass('on')) {
+                $button.removeClass('on');
             } else {
-                $('#' + self.config.toolbarId + ' .font-bold').addClass("font-bold-active");
+                $button.addClass('on');
             }
-            self.execCommand("bold", "");
+            editor.exec_command('bold', '');
         },
-        selectionStyleFun : function (self, curElm, $parents) {
-            var tagName = curElm.nodeName.toLowerCase();
-            var reg_tagName = {
+        onselected : function (editor, selection_text_container, $parents) {
+            var tag_name = selection_text_container.nodeName.toLowerCase();
+            var tag_name_map = {
                 "b" : true,
                 "strong" : true
             };
             var reg_css = /bold/i;
-            var outerHTML = curElm.outerHTML.match(/\<[^\>]+\>/)[0];
-            var val = false;
+            var outerHTML = selection_text_container.outerHTML.match(/<[^>]+>/)[0];
+            var has_bold = false;
             
-            if (reg_tagName[tagName] || reg_css.test(outerHTML)) {
-                val = true;
+            if (tag_name_map[tag_name] || reg_css.test(outerHTML)) {
+                has_bold = true;
             }
-            if (!val && $parents) {
-                var length = $parents.length
-                    for (var i = 0; i < length; i++) {
-                        var curDom = $parents[i];
-                        var tagName = curDom.nodeName.toLowerCase();
-                        var outerHTML = curDom.outerHTML.match(/\<[^\>]+\>/)[0];
-                        if (reg_tagName[tagName] || reg_css.test(outerHTML)) {
-                            val = true;
-                            break;
-                        }
+            var length = $parents.length,
+                parent;
+            if (!has_bold && $parents) {
+                for (var i = 0; i < length; i++) {
+                    parent = $parents[i];
+                    tag_name = parent.nodeName.toLowerCase();
+                    outerHTML = parent.outerHTML.match(/<[^>]+>/)[0];
+                    if (tag_name_map[tag_name] || reg_css.test(outerHTML)) {
+                        has_bold = true;
+                        break;
                     }
+                }
             }
             
-            var btnDom = $('#' + self.config.toolbarId + ' .font-bold');
-            var hasBold = btnDom.hasClass("font-bold-active");
-            if (val && !hasBold) {
-                $('#' + self.config.toolbarId + ' .font-bold').addClass("font-bold-active");
+            var $button = editor.find('font-bold a');
+            var has_enabled = $button.hasClass('on');
+            if (has_bold && !has_enabled) {
+                $button.addClass('on');
             }
-            if (!val && hasBold) {
-                $('#' + self.config.toolbarId + ' .font-bold').removeClass("font-bold-active");
+            if (!has_bold && has_enabled) {
+                $button.removeClass('on');
             }
         },
         html :  '<div class="font-btns font-bold">'+
-                    '<a href="javascript:;" btntype="btnFontBold" title="粗体" unselectable="on">粗体</a>'+
+                    '<a href="javascript:;" data-onclick="exec" data-name="btn_bold" title="粗体" unselectable="on">粗体</a>'+
                 '</div>'
     }
 );
