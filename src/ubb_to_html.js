@@ -1,4 +1,5 @@
-    function ubb_to_html(ubb) {
+    function ubb_to_html(editor,ubb) {
+        var ubb_map = editor.ubb_map;
         var length = 0;
         var html = ubb.replace(/\x20?\[[^\[\]]+\]/gi, function (tag) {
             var t = tag;

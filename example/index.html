@@ -5,14 +5,34 @@
         <meta http-equiv="x-ua-compatible" content="ie=8">
         <title>ubb-editor</title>
         <link href="css/editor.css" media="all" rel="stylesheet" type="text/css"/>
+        <style>
+            pre{
+            padding: 5px;
+            font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
+            margin-bottom: 10px;
+            background-color: #EEE;
+            overflow: auto;
+            width: auto;
+            width: 650px !ie7;
+            padding-bottom: 20px !ie7;
+            max-height: 600px;
+            }
+        </style>
     </head>
     <body>
-        <textarea id="editor1"></textarea>
-        
+        <textarea id="editor1">[b]粗体测试[/b][fontdd0000]颜色测试[/font][font3]字号测试[/font]123sdfsdfsdfs[b]dfsdfsdf[/b]</textarea>
+        <pre id="J_editor_content" style="width:600px;" wrap="off"></pre>
         <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
         <script src="../dist/ubb_editor.js"></script>
         <script>
-            $('#editor1').ubb_editor();
+            $('#editor1').ubb_editor(function(editor){
+                var editor_con_pre = $('#J_editor_content');
+                function show_html(){
+                    editor_con_pre.html(editor.iframe_document.body.innerHTML.replace(/</g,'&lt').replace(/>/g,'&gt'));
+                    setTimeout(show_html,1000);
+                }
+                show_html();
+            });
         </script>
     </body>
 </html>

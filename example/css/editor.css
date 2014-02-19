@@ -34,46 +34,35 @@
 .ubb_editor .ubb_color_panel{position:absolute;padding:0 4px 4px 0px;top:35px;left:10px;border:1px solid #ddd;background:#fff;border-radius:3px;-moz-border-radius:3px;-webkit-border-radius:3px;}
 .ubb_editor .ubb_color_panel a{float:left;width:16px;height:16px;margin-top:4px;margin-left:4px;line-height:16px;text-indent:-2000px;overflow:hidden;position:relative;}
 .ubb_editor .ubb_color_panel a:hover{text-decoration:none;}
-.ubb_editor .faceWrap{position:absolute;padding:4px;top:34px;left:10px;border:1px solid #ddd;background:#fff;border-radius:3px;-moz-border-radius:3px;-webkit-border-radius:3px;}
-.ubb_editor .faceWrap a{border-bottom:1px solid #ddd;border-right:1px solid #ddd;float:left;width:30px;height:30px;line-height:30px;text-indent:-2000px;overflow:hidden;position:relative;}
-.ubb_editor .faceWrap a:hover{text-decoration:none;}
-.ubb_editor .faceWrapBorder{border-left:1px solid #ddd;border-top:1px solid #ddd;width:372px;}
-.ubb_editor .imgWrap{position:absolute;padding:15px;width:366px;top:36px;left:10px;border:1px solid #ddd;background:#fff;border-radius:3px;-moz-border-radius:3px;-webkit-border-radius:3px;box-shadow:0 0 3px rgba(34,25,25,0.2);-moz-box-shadow:0 0 3px rgba(34,25,25,0.2);-webkit-box-shadow:0 0 3px rgba(34,25,25,0.2)}
-.ubb_editor .imgWrap .uploadImg{position:relative;height:28px;/*padding-bottom:12px;border-bottom:1px dotted #ddd;*/}
-.ubb_editor .imgWrap .upload-cover{width:105px;}
-.ubb_editor .imgWrap .upload-btn{ position:absolute;top:0px;left:0px;filter:alpha(opacity=0);opacity:0;z-index:698;display:block;width:105px;height:28px; cursor:pointer;}
-.ubb_editor .imgWrap .netImg {display:none;}
-.ubb_editor .imgWrap .netImg p{height:20px;line-height:20px;padding:8px 0;}
-.ubb_editor .imgWrap .netImg .bbl-btn{width:60px;margin-top:2px;float:right;}
-.ubb_editor .imgWrap .tipbox-up{left:285px;}
-.ubb_editor .base-input{width:290px;float:left;}
-.ubb_editor .videoWrap{top:36px;left:10px;border:1px solid #ddd;border-radius:3px;-moz-border-radius:3px;-webkit-border-radius:3px;}
-.ubb_editor .videoWrap #J_InsertVideo{width:60px;margin-top:2px;float:right;}
-.ubb_editor .videoWrap .content .tipbox-up{left:340px;}
-.ubb_editor .videoWrap .content .title{padding-bottom:10px;font-weight:normal;}
-.ubb_editor .videoWrap .content .sg-source p{height:20px;line-height:20px;padding:8px 0 5px 0;}
-.ubb_editor .videoWrap .sg-form .sg-input { margin-right:0px; } 
-.icon-youku{height:20px;color:#666;line-height:20px;padding-left:22px;padding-right:6px;float:left;background:transparent url(../img/edit_toolbar.gif) 0px -123px no-repeat;}
-.icon-tudou{height:20px;color:#666;line-height:20px;padding-left:22px;padding-right:6px;float:left;background:transparent url(../img/edit_toolbar.gif) 0px -148px no-repeat;}
-.icon-sinavideo{height:20px;color:#666;line-height:20px;padding-left:22px;padding-right:6px;float:left;background:transparent url(../img/edit_toolbar.gif) 0px -173px no-repeat;}
-.ubb_editor .baobeiWrap{top:35px;left:10px;border:1px solid #ddd;position:absolute;z-index:9997;width:380px;background:#fff;border-radius:3px;-moz-border-radius:3px;-webkit-border-radius:3px;}
-.ubb_editor .baobeiWrap #J_InsertBaobei{float:right;}
-.ubb_editor .baobeiWrap .con { position:relative;padding:12px 15px;min-height:0; } 
-.ubb_editor .baobeiWrap .con .tipbox-up{left:170px;left:-9999px;}
-/* 弹出层箭头 */
-.tipbox-up { left:50%;margin-left:-8px;top:-10px;position:absolute; } 
-.tipbox-up em, .tipbox-up span { height:19px;width:17px;font-family:Simsun;font-size:16px;line-height:21px;overflow:hidden;position:absolute; }  
-.tipbox-up em { color:#ccc; } 
-.tipbox-up span { top:1px;color:#fff; } 
-
-.ubb_editor .baobeiWrap .con .title{padding-bottom:10px;font-weight:normal;color:#333;font-size:12px;}
-.ubb_editor .baobeiWrap .con .sg-source p{height:20px;line-height:20px;padding:8px 0 5px 0;}
-.ubb_editor .baobeiWrap .sg-form .sg-input { width:290px; } 
-.ubb_editor .baobeiWrap .sg-form .sg-input {height:22px;line-height:22px;}
-.ubb_editor .baobeiWrap .sg-form .sg-input input{margin:2px 0px 0px 3px;}
-.ubb_editor .baobeiWrap .sg-form .url-sub { margin-top:2px;cursor:pointer;*visibility:visible;width:56px\9; } 
-.ubb_editor .baobeiWrap .sg-form .text-tip { display:none;padding:5px 0;line-height:1.1; } 
-.ubb_editor .baobeiWrap .sg-form .confirm_btn{
+.ubb_editor .ubb_link_panel{top:35px;left:10px;position:relative;padding:12px 15px;border:1px solid #ddd;position:absolute;z-index:9997;width:350px;background:#fff;border-radius:3px;-moz-border-radius:3px;-webkit-border-radius:3px;}
+.ubb_editor .ubb_link_panel .title{padding-bottom:10px;font-weight:normal;color:#333;font-size:12px;}
+.ubb_editor .ubb_link_panel label {
+    vertical-align: top;
+    display: inline-block;
+    height: 22px;
+    line-height:22px;
+    border: 1px solid #CCC;
+    border-top: 1px solid #ADADAD;
+    overflow: hidden;
+    background: #FFF;
+    position: relative;
+    margin-right: 10px;
+    width:290px;
+} 
+.ubb_editor .ubb_link_panel input{
+    border: 0;
+    height: 18px;
+    line-height: 18px;
+    width:290px;
+    outline: none;
+    margin: 2px 0px 0px 3px;
+    width: 100%;
+    vertical-align: top;
+    font-size: 14px;
+    color: #555;
+    text-align: left;
+}
+.ubb_editor .ubb_link_panel a{
     float:right;
     background:url(../../image/btn.gif) repeat-x;
     height:22px;
@@ -85,5 +74,4 @@
     border-radius:3px;
     border:1px solid #ccc;
 }
-.ubb_editor .baobeiWrap .sg-form .confirm_btn:hover{opacity:0.8}
-.ubb_editor .baobeiWrap .manual-upload { line-height:1.1;padding:5px 0 0 0;border-top:1px dotted #d1d1d1; } 
+.ubb_editor .ubb_link_panel .manual-upload { line-height:1.1;padding:5px 0 0 0;border-top:1px dotted #d1d1d1; } 

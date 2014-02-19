@@ -81,3 +81,14 @@ $.ubb_editor.set_config('size',
         px  : '18px'
     }]
 );
+$.ubb_editor.set_config('size_map',
+    (function(){
+        var size = $.ubb_editor.get_config('size');
+        var size_map = {};
+        for (var i = 0; i < size.length; i++) {
+            size_map[size[i].val+''] = size[i].px;
+        }
+        return size_map;
+    })()
+);
+

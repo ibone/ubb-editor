@@ -14,12 +14,11 @@ $.ubb_editor.set_config('btn_color',
             }
         },
         onselected : function (editor, selection_text_container, $parents) {
-            var tag_name = selection_text_container.nodeName.toLowerCase();
             var cur_color = null;
-            var reg_css = /color\:/i;
+            var reg_hex = /#[0-9a-f]{6}/i;
             var reg_rgb = /rgb\(\s?(\d{1,3})\,\s?(\d{1,3})\,\s?(\d{1,3})\)/i;
-            var outerHTML = selection_text_container.outerHTML.match(/<[^>]+>/)[0];
-            var attr_color = $(selection_text_container).attr('color');
+            var color = selection_text_container.style.color;
+            var rgbArr;
             var Rgb2Hex = function(rgb){
                 if(!rgb && rgb.length !== 3){
                     return rgb;
@@ -32,45 +31,40 @@ $.ubb_editor.set_config('btn_color',
                 }
                 return Hex;
             };
-            var rgbArr;
-            if (attr_color) {
-                cur_color = attr_color;
-            } else if (reg_css.test(outerHTML)) {
-                rgbArr = outerHTML.match(reg_rgb);
+            if(reg_hex.test(color)){
+                cur_color = color;
+            }
+            if(reg_rgb.test(color)){
+                rgbArr = color.match(reg_rgb);
                 if (rgbArr) {
                     cur_color = Rgb2Hex([rgbArr[1], rgbArr[2], rgbArr[3]]);
                 }
-                //to do reg hex
             }
             var parent;
             if (!cur_color && $parents) {
                 var length = $parents.length;
                 for (var i = 0; i < length; i++) {
                     parent = $parents[i];
-                    tag_name = parent.nodeName.toLowerCase();
-                    outerHTML = parent.outerHTML.match(/<[^>]+>/)[0];
-                    attr_color = $(parent).attr("color");
-                    if (attr_color) {
-                        cur_color = attr_color;
-                    } else if (reg_css.test(outerHTML)) {
-                        rgbArr = outerHTML.match(reg_rgb);
+                    color = parent.style.color;
+                    if(reg_hex.test(color)){
+                        cur_color = color;
+                    }
+                    if(reg_rgb.test(color)){
+                        rgbArr = color.match(reg_rgb);
                         if (rgbArr) {
                             cur_color = Rgb2Hex([rgbArr[1], rgbArr[2], rgbArr[3]]);
                         }
-                        //to do reg style hex
                     }
                     if (cur_color) {
                         break;
                     }
                 }
             }
-            if (!self.curFontColor) {
-                self.curFontColor = null;
-            }
-            if (cur_color === null) {
+            if (!cur_color) {
                 cur_color = '#333333';
             }
-            editor.find('font-color i').css('background-color',cur_color);
+            console.log(cur_color);
+            editor.find('.font-color i').css('background-color',cur_color);
         },
         html :  '<div class="font-btns font-color">'+
                     '<a href="javascript:;" data-onclick="show_panel" data-name="btn_color" title="前景色" unselectable="on">'+
@@ -78,10 +72,9 @@ $.ubb_editor.set_config('btn_color',
                     '</a>'+
                 '</div>',
         exec : function (editor, target_button) {
-            var color = $(target_button).data("color");
+            var color = $(target_button).data('color');
             editor.exec_command("forecolor", color);
-            editor.find('.font-colo i').css('background-color',color);
-            editor.hide_panel();
+            editor.find('.font-color i').css('background-color',color);
         }
     }
 );

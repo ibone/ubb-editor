@@ -5,23 +5,49 @@
         buttons_loader : ['btn_bold', 'btn_color', 'btn_size', 'btn_link']//默认按钮排列样式
     };
     var is_ie678 = ! + '\v1';
-    $.fn.ubb_editor = function (config) {
+    function type_of(obj){
+        return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+    }
+    function stop_bubble(event){
+        if (event.stopPropagation) {
+            event.stopPropagation();
+        } else {
+            event.cancelBubble = true;
+        }
+    }
+    
+    $.fn.ubb_editor = function (config,callback) {
+        if(type_of(config) === 'function'){
+            callback = config;
+            config = {};
+        }
+        if(type_of(config) !== 'object'){
+            config = {};
+            callback = function(){};
+        }
         this.each(function(){
             var editor = $.extend({}, default_config ,config||{});
             editor.textarea = $(this);
             make_editor(editor);
+            callback(editor);
         });
         return this;
     };
+    
     $.ubb_editor = {
         set_config : function(key,val){
             default_config[key] = val;
+        },
+        get_config : function(key){
+            return default_config[key];
         }
     };
+    
     function make_editor(editor){
         $.extend(editor,{
             editor_id : 'ubb_editor'+(new Date().getTime())+Math.floor(Math.random()*100),
             exec_command : function(command, value) {
+                this.hide_panel();
                 this.iframe_document.execCommand(command, false, value);
                 this.iframe.contentWindow.focus();
                 set_textarea(this);
@@ -33,6 +59,7 @@
                 }
             },
             add_panel : function(panel_html) {
+                this.hide_panel();
                 this.cur_panel = $(panel_html);
                 this.$toolbar.append(this.cur_panel);
             },
@@ -52,6 +79,16 @@
             },
             find : function(select_str){
                 return editor.$editor_document.find(select_str);
+            },
+            data : function(key,val){
+                if(typeof key !== 'string'){
+                    return null;
+                }
+                if(typeof val !== 'undefined'){
+                    return this.$editor_document.data(key,val);
+                }else{
+                    return this.$editor_document.data(key);
+                }
             }
         });
         var html = '<div class="ubb_editor_wrap" id="'+editor.editor_id+'"><div class="ubb_editor"><div class="ubb_editor_toolbar">';
@@ -74,14 +111,6 @@
         editor.$toolbar = editor.find('.ubb_editor_toolbar');
         editor_init(editor);
     }
-    
-    function stop_bubble(event){
-        if (event.stopPropagation) {
-            event.stopPropagation();
-        } else {
-            event.cancelBubble = true;
-        }
-    }
 
     function editor_init(editor) {
         //编辑菜单事件初始化
@@ -92,29 +121,36 @@
             var $button = $(this),
                 button_type = $button.data('onclick'),
                 button_name = $button.data('name');
-            stop_bubble(event);
             editor[button_name][button_type](editor,this);
+        });
+        editor.$toolbar.on("click", function (event) {
+            if(this === (event.srcElement||event.target)){
+                editor.hide_panel();
+            }
+            stop_bubble(event);
         });
         //初始化iframe内容，涉及编辑器和预览的样式统一
         editor.iframe_document.designMode = "on";
         editor.iframe_document.open();
         if (is_ie678) {
-            editor.iframe_document.write('<html><head><style type="text/css">html,body{height:100%;width:100%;margin:0;padding:0;border:0;overflow:auto;background:#fff;cursor:text;font-size:13px;word-wrap:break-word;}p{padding:0;margin:0;}*{line-height:160%;}body{font-family:Arial,Helvetica,Sans-Serif;font-size:13px;text-align:left;}em{font-style:italic;} img{border:0;max-width:100%;cursor:default;} a{color:#16B} a:hover{color:#16B}</style></head></html>');
+            editor.iframe_document.write('<html><head><style type="text/css">html,body{height:100%;width:100%;margin:0;padding:0;border:0;overflow:auto;background:#fff;cursor:text;font-size:12px;word-wrap:break-word;}p{padding:0;margin:0;}*{line-height:160%;}body{font-family:Arial,Helvetica,Sans-Serif;font-size:13px;text-align:left;}em{font-style:italic;} img{border:0;max-width:100%;cursor:default;} a{color:#16B} a:hover{color:#16B}</style></head></html>');
         } else {
-            editor.iframe_document.write('<html><head><style type="text/css">html,body{height:100%;width:100%;margin:0;padding:0;border:0;overflow:auto;background:#fff;cursor:text;font-size:13px;word-wrap:break-word;}p{padding:0;margin:0;}*{line-height:160%;}html{height:1px;overflow:visible;} body{overflow:hidden;font-family:Arial,Helvetica,Sans-Serif;font-size:13px;text-align:left;}em{font-style:italic;} img{border:0;max-width:100%;} a{color:#16B} a:hover{color:#16B}</style></head></html>');
+            editor.iframe_document.write('<html><head><style type="text/css">html,body{height:100%;width:100%;margin:0;padding:0;border:0;overflow:auto;background:#fff;cursor:text;font-size:12px;word-wrap:break-word;}p{padding:0;margin:0;}*{line-height:160%;}html{height:1px;overflow:visible;} body{overflow:hidden;font-family:Arial,Helvetica,Sans-Serif;font-size:13px;text-align:left;}em{font-style:italic;} img{border:0;max-width:100%;} a{color:#16B} a:hover{color:#16B}</style></head></html>');
         }
         editor.iframe_document.close();
         var textarea_value = editor.textarea.text();
         var $iframe = $(editor.iframe);
         var $iframe_document = $(editor.iframe_document);
-        if (textarea_value !== "") {
-            editor.iframe_document.body.innerHTML = ubb_to_html(textarea_value);
-            editor.iframe.contentWindow.focus();
-            $iframe.height($iframe_document.height());
-            editor.textarea.data('text',$iframe_document.find('body').text());//保存用户输入的纯文字，不包含ubb或html，做内容长度校验使用
-        }else{
-            editor.iframe_document.body.innerHTML = '&nbsp;';
-        }
+        setTimeout(function(){
+            if (textarea_value !== "") {
+                editor.iframe_document.body.innerHTML = ubb_to_html(editor,textarea_value);
+                editor.iframe.contentWindow.focus();
+                $iframe.height($iframe_document.height());
+                editor.textarea.data('text',$iframe_document.find('body').text());//保存用户输入的纯文字，不包含标签，做内容长度校验使用
+            }else{
+                editor.iframe_document.body.innerHTML = '&nbsp;';
+            }
+        },1);
         //当用户使用鼠标在文本上操作的时候，获得该文本区域的样式，使工具栏样式联动
         $iframe_document.on("mouseup click", function (event) {
             //时间涉及选中和点击，选中有可能只在某个节点内，那么会同时触发点击
