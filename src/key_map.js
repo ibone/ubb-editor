@@ -52,7 +52,7 @@
         221: ']'
     };
     
-    var is_mac = navigator.appVersion.indexOf("Mac") !== -1;
+    var is_mac = navigator.appVersion.indexOf('Mac') !== -1;
     
     function key_event_to_string(event){
         var tokens = [];

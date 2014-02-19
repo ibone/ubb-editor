@@ -33,6 +33,7 @@ module.exports = function (grunt) {
                     'src/ubb_to_html.js',
                     'src/html_to_ubb.js',
                     'src/outro.js',
+                    'src/font.js',
                     'src/btn_bold.js',
                     'src/btn_color.js',
                     'src/btn_size.js',

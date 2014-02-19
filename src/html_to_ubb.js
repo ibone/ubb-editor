@@ -1,4 +1,5 @@
-    function html_to_ubb(html,editor) {
+    function html_to_ubb(editor) {
+        var html = editor.iframe_document.body.innerHTML;
         var reg_spanColse = /<span(?!.*?<span).*?<\/span>/gi;
         var reg_fontColse = /<font(?!.*?<font).*?<\/font>/gi;
         var reg_bColse = /<b(?!.*?<b).*?<\/b>/gi;

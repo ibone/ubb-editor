@@ -12,8 +12,8 @@ $.ubb_editor.set_config('btn_bold',
         onselected : function (editor, selection_text_container, $parents) {
             var tag_name = selection_text_container.nodeName.toLowerCase();
             var tag_name_map = {
-                "b" : true,
-                "strong" : true
+                'b' : true,
+                'strong' : true
             };
             var reg_css = /bold/i;
             var outerHTML = selection_text_container.outerHTML.match(/<[^>]+>/)[0];
@@ -22,10 +22,9 @@ $.ubb_editor.set_config('btn_bold',
             if (tag_name_map[tag_name] || reg_css.test(outerHTML)) {
                 has_bold = true;
             }
-            var length = $parents.length,
-                parent;
-            if (!has_bold && $parents) {
-                for (var i = 0; i < length; i++) {
+            var parent;
+            if (!has_bold && $parents.length) {
+                for (var i = 0; i < $parents.length; i++) {
                     parent = $parents[i];
                     tag_name = parent.nodeName.toLowerCase();
                     outerHTML = parent.outerHTML.match(/<[^>]+>/)[0];
@@ -36,7 +35,7 @@ $.ubb_editor.set_config('btn_bold',
                 }
             }
             
-            var $button = editor.find('font-bold a');
+            var $button = editor.find('.font-bold a');
             var has_enabled = $button.hasClass('on');
             if (has_bold && !has_enabled) {
                 $button.addClass('on');

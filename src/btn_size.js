@@ -1,10 +1,10 @@
 $.ubb_editor.set_config('btn_size',
     {
         show_panel : function (editor) {
-            if (editor.find('.ubb_size_panel').legnth === 0) {
+            if (editor.find('.ubb_size_panel').length === 0) {
                 var html = '<div class="ubb_size_panel">';
-                for (var i = 0; i < length; i++) {
-                    html += '<a data-onclick="exec" data-name="btn_size" size="'+editor.size[i].val+'" href="javascript:;" title="'+editor.size[i].alt+'" unselectable="on">'+editor.size[i].alt+'</a>';
+                for (var i = 0; i < editor.size.length; i++) {
+                    html += '<a data-onclick="exec" data-name="btn_size" data-size="'+editor.size[i].val+'" style="font-size:'+ editor.size_map[editor.size[i].val+''] +'" href="javascript:;" title="'+editor.size[i].alt+'" unselectable="on">'+editor.size[i].alt+'</a>';
                 }
                 html += '</div>';
                 editor.add_panel(html);
@@ -13,14 +13,11 @@ $.ubb_editor.set_config('btn_size',
             }
         },
         onselected : function (editor, selection_text_container, $parents) {
-            var tag_name = selection_text_container.nodeName.toLowerCase();
             var cur_size = null;
-            var reg_css = /size/i;
-            cur_size = $(curElm).attr("size") || null;
-            if (!cur_size && $parents) {
-                var length = $parents.length;
-                for (var i = 0; i < length; i++) {
-                    cur_size = $parents.eq(i).attr("size") || null;
+            cur_size = selection_text_container.style.fontSize || null;
+            if (!cur_size && $parents.length) {
+                for (var i = 0; i < $parents.length; i++) {
+                    cur_size = $parents[0].style.fontSize || null;
                     if (cur_size) {
                         break;
                     }
@@ -29,7 +26,7 @@ $.ubb_editor.set_config('btn_size',
             if (cur_size == null) {
                 editor.find('.font-size a').text("标准字体");
             } else {
-                $(editor.size).each(function(){
+                $(editor.size_map).each(function(){
                     if(this.val+'' === cur_size){
                         editor.find('.font-size a').text(this.alt);
                     }
@@ -40,8 +37,19 @@ $.ubb_editor.set_config('btn_size',
                     '<a href="javascript:;" data-onclick="show_panel" data-name="btn_size" title="字号" unselectable="on">标准字体</a>'+
                 '</div>',
         exec : function (editor, target_button) {
+            var change_font = function() {
+                var elements = editor.iframe_document.getElementsByTagName("font");
+                for (var i = 0, len = elements.length; i < len; ++i) {
+                    var px = editor.size_map[elements[i].size];
+                    if (px) {
+                        elements[i].removeAttribute("size");
+                        elements[i].style.fontSize = px;
+                    }
+                }
+            };
             var $button = $(target_button);
-            editor.exec_command("fontsize", $button.attr("size"));
+            editor.exec_command('fontsize', $button.data("size"));
+            change_font();
             editor.find('.font-size a').text($button.attr("title"));
             editor.hide_panel();
         }

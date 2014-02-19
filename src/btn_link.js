@@ -29,7 +29,7 @@ $.ubb_editor.set_config('btn_link',
                 '</div>',
         exec : function (editor) {
             var url = editor.find('.ubb_link_panel input').val();
-            if(url === "http://" || url === "") {
+            if(url === 'http://' || url === '') {
                 if(alert_fail){
                     alert_fail("请输入一个链接");
                 }else{
@@ -47,13 +47,13 @@ $.ubb_editor.set_config('btn_link',
             }
             if(!url.match(/http\:\/\/([a-z]{1,15}\.)?cncn\.(com|net)/)){
                 if(alert_fail){
-                    alert_fail("不能输入外网链接");
+                    alert_fail('不能输入外网链接');
                 }else{
-                    alert("不能输入外网链接");
+                    alert('不能输入外网链接');
                 }
                 return false;
             }
-            editor.exec_command("createlink", url);
+            editor.exec_command('createlink', url);
             /* 如果需要给链接添加target title
             var tmp = 'javascript:;';
             var dom_a = self('A','href',tmp);

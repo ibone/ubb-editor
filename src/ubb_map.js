@@ -16,8 +16,8 @@
         '[end]'   : '>',
         '[/a]'    : '</a>'
     };
-    var color_len = congif.color.length;
-    var size_len = congif.size.length;
+    var color_len = default_config.color.length;
+    var size_len = default_config.size.length;
     for (var j = 0; j < size_len; j++) {
         ubb_map['[font' + congif.size[j] + ']'] = '<font size="' + congif.size[j] + '">';
     }
