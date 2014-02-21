@@ -1,5 +1,5 @@
+    //可控制便可转换，所有能操作的样式才能变成ubb格式，其他一律清除
     function html_to_ubb(editor) {
-        //可控制便可转换，所有能操作的样式才能变成ubb格式，其他一律清除
         var html = editor.iframe_document.body.innerHTML;
         //var reg_spanColse = /<span(?!.*?<span).*?<\/span>/gi;
         //.*?后面的?号是避免正则贪婪
