@@ -62,6 +62,7 @@ $.ubb_editor.set_config('color',
         alt : '黄色'
     }
 ]);
+
 $.ubb_editor.set_config('size',
     [{
         val : 1,
@@ -81,6 +82,7 @@ $.ubb_editor.set_config('size',
         px  : '18px'
     }]
 );
+
 $.ubb_editor.set_config('size_map',
     (function(){
         var size = $.ubb_editor.get_config('size');
@@ -91,4 +93,3 @@ $.ubb_editor.set_config('size_map',
         return size_map;
     })()
 );
-

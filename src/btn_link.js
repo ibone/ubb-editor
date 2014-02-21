@@ -35,6 +35,9 @@ $.ubb_editor.set_config('btn_link',
             input.val('');
             /* 如果需要给链接添加target title
             */
+        },
+        get_ubb_attr : function($element){
+            return ($element.attr('href')&&(' end]' + $element.attr('href') + '[end'))||'';
         }
     }
 );

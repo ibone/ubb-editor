@@ -2,12 +2,16 @@
         color : [],//[{val:'333333',alt:'black'},...]
         size : [],
         ubb_map : {},
-        buttons_loader : ['btn_bold', 'btn_color', 'btn_size', 'btn_link']//默认按钮排列样式
+        buttons_loader : ['btn_bold', 'btn_color', 'btn_size', 'btn_link'],//默认按钮排列样式
+        style_weight : ['btn_size', 'btn_color', 'btn_bold', 'btn_link']//样式权重，样式转换成ubb的时候的优先顺序
     };
+    
     var is_ie678 = ! + '\v1';
+    
     function type_of(obj){
         return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
     }
+    
     function stop_bubble(event){
         if (event.stopPropagation) {
             event.stopPropagation();
@@ -102,7 +106,7 @@
             }
         });
         html += '</div>';
-        html += '<div class="ubb_editor_iframeWrap"><iframe frameborder="0" spellcheck="false" style="height:'+height+'px"></iframe></div>';
+        html += '<div class="ubb_editor_iframe_wrap"><iframe frameborder="0" spellcheck="false" style="height:'+height+'px"></iframe></div>';
         html += '</div></div>';
         editor.textarea.after(html).hide();
         editor.$editor_document = $("#" + editor.editor_id);
@@ -133,9 +137,9 @@
         editor.iframe_document.designMode = "on";
         editor.iframe_document.open();
         if (is_ie678) {
-            editor.iframe_document.write('<html><head><style type="text/css">html,body{height:100%;width:100%;margin:0;padding:0;border:0;overflow:auto;background:#fff;cursor:text;font-size:12px;word-wrap:break-word;}p{padding:0;margin:0;}*{line-height:160%;}body{font-family:Arial,Helvetica,Sans-Serif;font-size:13px;text-align:left;}em{font-style:italic;} img{border:0;max-width:100%;cursor:default;} a{color:#16B} a:hover{color:#16B}</style></head></html>');
+            editor.iframe_document.write('<html><head><style type="text/css">html,body{height:100%;width:100%;margin:0;padding:0;border:0;overflow:auto;background:#fff;cursor:text;font-size:12px;word-wrap:break-word;}p{padding:0;margin:0;}body{font:12px/1.5 tahoma,arial,\\5b8b\\4f53;text-align:left;}em{font-style:italic;} img{border:0;max-width:100%;cursor:default;} a{color:#16B} a:hover{color:#16B}</style></head></html>');
         } else {
-            editor.iframe_document.write('<html><head><style type="text/css">html,body{height:100%;width:100%;margin:0;padding:0;border:0;overflow:auto;background:#fff;cursor:text;font-size:12px;word-wrap:break-word;}p{padding:0;margin:0;}*{line-height:160%;}html{height:1px;overflow:visible;} body{overflow:hidden;font-family:Arial,Helvetica,Sans-Serif;font-size:13px;text-align:left;}em{font-style:italic;} img{border:0;max-width:100%;} a{color:#16B} a:hover{color:#16B}</style></head></html>');
+            editor.iframe_document.write('<html><head><style type="text/css">html,body{height:100%;width:100%;margin:0;padding:0;border:0;overflow:auto;background:#fff;cursor:text;font-size:12px;word-wrap:break-word;}p{padding:0;margin:0;}html{height:1px;overflow:visible;} body{overflow::hidden;font:12px/1.5 tahoma,arial,\\5b8b\\4f53;hidden;text-align:left;}em{font-style:italic;} img{border:0;max-width:100%;} a{color:#16B} a:hover{color:#16B}</style></head></html>');
         }
         editor.iframe_document.close();
         var textarea_value = editor.textarea.text();
@@ -276,6 +280,7 @@
             });
         }
     }
+    
     function get_range(editor) {
         var content_window = editor.iframe.contentWindow;
         var selection = null;
@@ -299,6 +304,7 @@
             editor.onselected[i](editor, editor.selection_text_container, $parents);
         }
     }
+    
     //append 向编辑器插入html代码
     //@param html (String||Node @@如果是ie678则传字符串，如果是标准浏览器，则传node)
     function append_html_to_editor(editor, html) {
@@ -317,6 +323,7 @@
             selection.addRange(range);
         }
     }
+    
     function set_textarea(editor){
         setTimeout(function(){
             editor.textarea.text(html_to_ubb(editor))

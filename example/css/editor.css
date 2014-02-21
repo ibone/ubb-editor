@@ -24,8 +24,8 @@
 .ubb_editor .ubb_editor_toolbar .baobei a{background-position:5px -70px;}
 .ubb_editor .ubb_editor_toolbar .img a{background-position:5px -20px;}
 .ubb_editor .ubb_editor_toolbar .video a{background-position:5px -45px;}
-.ubb_editor .iframeWrap{padding:8px;}
-.ubb_editor .iframeWrap iframe{width:622px;}
+.ubb_editor .ubb_editor_iframe_wrap{padding:8px;}
+.ubb_editor .ubb_editor_iframe_wrap iframe{width:622px;}
 .ubb_editor .ubb_size_panel{position:absolute;padding:0 2px 2px 2px;top:35px;left:78px;border:1px solid #ddd;background:#fff;border-radius:3px;-moz-border-radius:3px;-webkit-border-radius:3px;}
 .ubb_editor .ubb_size_panel a{display:block;width:78px;margin-top:2px;padding-left:6px;height:24px;line-height:24px;text-align:left;color:#666;background:#f3f3f3;}
 .ubb_editor .ubb_size_panel a:hover{text-decoration:none;background:#f8f8f8;}

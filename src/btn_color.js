@@ -13,57 +13,14 @@ $.ubb_editor.set_config('btn_color',
                 editor.toggle_panel('.ubb_color_panel');
             }
         },
-        onselected : function (editor, selection_text_container, $parents) {
+        onselected : function (editor) {
             var cur_color = null;
-            var reg_hex = /#[0-9a-f]{6}/i;
-            var reg_rgb = /rgb\(\s?(\d{1,3})\,\s?(\d{1,3})\,\s?(\d{1,3})\)/i;
-            var color = selection_text_container.style.color;
-            var rgbArr;
-            var Rgb2Hex = function(rgb){
-                if(!rgb && rgb.length !== 3){
-                    return rgb;
-                }
-                var Hex = "#";
-                var int16 = '';
-                for(var i=0; i<3; i++){
-                    int16 = Number(rgb[i]).toString(16);
-                    Hex += (int16.length === 1?'0':'')+int16;
-                }
-                return Hex;
-            };
-            if(reg_hex.test(color)){
+            var color = $(editor.selection_text_container).css('color');
+            if(color){
                 cur_color = color;
-            }
-            if(reg_rgb.test(color)){
-                rgbArr = color.match(reg_rgb);
-                if (rgbArr) {
-                    cur_color = Rgb2Hex([rgbArr[1], rgbArr[2], rgbArr[3]]);
-                }
-            }
-            var parent;
-            if (!cur_color && $parents) {
-                var length = $parents.length;
-                for (var i = 0; i < length; i++) {
-                    parent = $parents[i];
-                    color = parent.style.color;
-                    if(reg_hex.test(color)){
-                        cur_color = color;
-                    }
-                    if(reg_rgb.test(color)){
-                        rgbArr = color.match(reg_rgb);
-                        if (rgbArr) {
-                            cur_color = Rgb2Hex([rgbArr[1], rgbArr[2], rgbArr[3]]);
-                        }
-                    }
-                    if (cur_color) {
-                        break;
-                    }
-                }
-            }
-            if (!cur_color) {
+            }else{
                 cur_color = '#333333';
             }
-            console.log(cur_color);
             editor.find('.font-color i').css('background-color',cur_color);
         },
         html :  '<div class="font-btns font-color">'+
@@ -72,9 +29,43 @@ $.ubb_editor.set_config('btn_color',
                     '</a>'+
                 '</div>',
         exec : function (editor, target_button) {
+            var reg_rgb = /rgb\(\s?(\d{1,3})\,\s?(\d{1,3})\,\s?(\d{1,3})\)/i;
+            var Rgb2Hex = function(rgb){
+                if(!rgb && rgb.length !== 3){
+                    return rgb;
+                }
+                var Hex = '';
+                var int16 = '';
+                for(var i=0; i<3; i++){
+                    int16 = Number(rgb[i]).toString(16);
+                    Hex += (int16.length === 1?'0':'')+int16;
+                }
+                return Hex;
+            };
+            var change_font = function() {
+                var fonts = editor.iframe_document.getElementsByTagName("font");
+                var $font,color;
+                for (var i = 0, len = fonts.length; i < len; ++i) {
+                    $font = $(fonts[i]);
+                    color = $font.css('color');
+                    if(color && reg_rgb.test(color)){
+                        rgbArr = color.match(reg_rgb);
+                        if (rgbArr) {
+                            color = Rgb2Hex([rgbArr[1], rgbArr[2], rgbArr[3]]);
+                        }
+                    }
+                    if (color) {
+                        $(fonts[i]).removeAttr('color').css('color','#' + color).attr('ubb-color',color);
+                    }
+                }
+            };
             var color = $(target_button).data('color');
             editor.exec_command("forecolor", color);
+            change_font();
             editor.find('.font-color i').css('background-color',color);
+        },
+        get_ubb_attr : function($element){
+            return $element.attr('ubb-color')||'';
         }
     }
 );

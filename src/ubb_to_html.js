@@ -1,4 +1,5 @@
     function ubb_to_html(editor,ubb) {
+        //可控制才可输出，道理同html_to_ubb
         var ubb_map = editor.ubb_map;
         var length = 0;
         var html = ubb.replace(/\x20?\[[^\[\]]+\]/gi, function (tag) {

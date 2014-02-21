@@ -6,6 +6,7 @@
         <title>ubb-editor</title>
         <link href="css/editor.css" media="all" rel="stylesheet" type="text/css"/>
         <style>
+            textarea{font:12px/1.5 tahoma,arial,\5b8b\4f53;}
             pre{
             padding: 5px;
             font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
@@ -16,12 +17,13 @@
             width: 650px !ie7;
             padding-bottom: 20px !ie7;
             max-height: 600px;
+            word-wrap: break-word;
             }
         </style>
     </head>
     <body>
-        <textarea id="editor1">[b]粗体测试[/b][fontdd0000]颜色测试[/font][font3]字号测试[/font]123sdfsdfsdfs[b]dfsdfsdf[/b]</textarea>
-        <pre id="J_editor_content" style="width:600px;" wrap="off"></pre>
+        <textarea id="editor1" style="width: 600px;height:100px;">[b]粗体测试[/b][fontdd0000]颜色测试[/font][font3]字号测试[/font][a end]href="http://google.com"[end]链接测试[/a]</textarea>
+        <pre id="J_editor_content" style="width:600px;"></pre>
         <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
         <script src="../dist/ubb_editor.js"></script>
         <script>
@@ -32,7 +34,7 @@
                     setTimeout(show_html,1000);
                 }
                 show_html();
-            });
+            }).show();
         </script>
     </body>
 </html>

@@ -12,18 +12,9 @@ $.ubb_editor.set_config('btn_size',
                 editor.toggle_panel('.ubb_size_panel');
             }
         },
-        onselected : function (editor, selection_text_container, $parents) {
-            var cur_size = null;
-            cur_size = selection_text_container.style.fontSize || null;
-            if (!cur_size && $parents.length) {
-                for (var i = 0; i < $parents.length; i++) {
-                    cur_size = $parents[0].style.fontSize || null;
-                    if (cur_size) {
-                        break;
-                    }
-                }
-            }
-            if (cur_size == null) {
+        onselected : function (editor) {
+            var cur_size = $(editor.selection_text_container).css('font-size');
+            if (!cur_size) {
                 editor.find('.font-size a').text("小号字体");
             } else {
                 $(editor.size).each(function(){
@@ -38,13 +29,15 @@ $.ubb_editor.set_config('btn_size',
                 '</div>',
         exec : function (editor, target_button) {
             var change_font = function() {
-                var elements = editor.iframe_document.getElementsByTagName("font"),
+                var fonts = editor.iframe_document.getElementsByTagName("font"),
                     size_map = editor.size_map;
-                for (var i = 0, len = elements.length; i < len; ++i) {
-                    var px = size_map[elements[i].size];
+                var $font,px,size;
+                for (var i = 0, len = fonts.length; i < len; ++i) {
+                    $font = $(fonts[i]);
+                    size = $font.attr('size');
+                    px = size_map[size];
                     if (px) {
-                        elements[i].removeAttribute("size");
-                        elements[i].style.fontSize = px;
+                        $(fonts[i]).removeAttr('size').css('font-size',px).attr('ubb-size',size);
                     }
                 }
             };
@@ -52,6 +45,9 @@ $.ubb_editor.set_config('btn_size',
             editor.exec_command('fontsize', $button.data("size"));
             editor.find('.font-size a').text($button.attr("title"));
             change_font();
+        },
+        get_ubb_attr : function($element){
+            return $element.attr('ubb-size')||'';
         }
     }
 );
