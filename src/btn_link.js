@@ -37,7 +37,7 @@ $.ubb_editor.set_config('btn_link',
             */
         },
         get_ubb_attr : function($element){
-            return ($element.attr('href')&&(' end]href="' + $element.attr('href') + '"[end'))||'';
+            return ($element.attr('href')&&('end]href="' + $element.attr('href') + '"[end'))||'';
         }
     }
 );

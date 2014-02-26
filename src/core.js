@@ -3,7 +3,7 @@
         size : [],
         ubb_map : {},
         buttons_loader : ['btn_bold', 'btn_color', 'btn_size', 'btn_link'],//默认按钮排列样式
-        style_weight : ['btn_size', 'btn_color', 'btn_bold', 'btn_link']//样式权重，样式转换成ubb的时候的优先顺序
+        weight : ['btn_size', 'btn_color', 'btn_bold', 'btn_link']//样式权重，样式转换成ubb的时候的优先顺序
     };
     
     var is_ie678 = ! + '\v1';

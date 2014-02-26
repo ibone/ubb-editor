@@ -6,15 +6,16 @@ $.ubb_editor.set_config('ubb_map',
     (function(){
         var ubb_map = {
             '[/font]' : '</font>',
-            '[span]'  : '<span>',
-            '[/span]' : '</span>',
+            '[span]'  : '<span>',//向下兼容
+            '[/span]' : '</span>',//向下兼容
             '[b]'     : '<b>',
             '[/b]'    : '</b>',
             '[p]'     : '<p>',
             '[/p]'    : '</p>',
             '[br]'    : '<br/>',
             '[s]'     : '&nbsp;',
-            '[a end]' : '<a ',
+            '[aend]' : '<a ',
+            '[a end]' : '<a ',//向下兼容
             '[end]'   : '>',
             '[/a]'    : '</a>'
         };
