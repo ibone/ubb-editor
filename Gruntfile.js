@@ -42,17 +42,7 @@ module.exports = function (grunt) {
                 ],
                 dest: 'dist/ubb_editor.js'
             }
-        },
-        jasmine: { 
-            test: { 
-                src: ['dist/ubb_editor.js'], 
-                options: { 
-                    specs: ['test/specs/ubb_editor_spec.js'], 
-                    helpers: [''],
-                    vendor: 'test/vendor/jquery1.10.2.js' 
-                } 
-            } 
-        } 
+        }
   });
  
   grunt.loadNpmTasks('grunt-contrib-jshint');

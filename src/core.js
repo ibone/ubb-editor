@@ -1,9 +1,6 @@
     var default_config = {
-        color : [],//[{val:'333333',alt:'black'},...]
-        size : [],
-        ubb_map : {},
-        buttons_loader : ['btn_bold', 'btn_color', 'btn_size', 'btn_link'],//默认按钮排列样式
-        weight : ['btn_size', 'btn_color', 'btn_bold', 'btn_link']//样式权重，样式转换成ubb的时候的优先顺序
+        toolbar : ['btn_bold', 'btn_color', 'btn_size', 'btn_link'],//默认按钮排列和加载
+        buttons : {}
     };
     
     var is_ie678 = ! + '\v1';
@@ -44,16 +41,20 @@
         },
         get_config : function(key){
             return default_config[key];
+        },
+        add_button : function(key,val){
+            default_config.buttons[key] = val;
         }
     };
     
     function make_editor(editor){
+        var id = (new Date().getTime())+Math.floor(Math.random()*100);
         $.extend(editor,{
-            editor_id : 'ubb_editor'+(new Date().getTime())+Math.floor(Math.random()*100),
+            id : 'ubb_editor' + id,
             exec_command : function(command, value) {
                 this.hide_panel();
                 this.iframe_document.execCommand(command, false, value);
-                this.iframe.contentWindow.focus();
+                this.focus();
                 set_textarea(this);
             },
             hide_panel : function() {
@@ -93,13 +94,25 @@
                 }else{
                     return this.$editor_document.data(key);
                 }
+            },
+            get_config : function(key){
+                return this[key] || null;
+            },
+            move_cursor : function(index){
+                if(type_of(index) === 'number'){
+                    set_range(this,index,index);
+                    this.focus();
+                }
+            },
+            focus : function(){
+                this.iframe.contentWindow.focus();
             }
         });
-        var html = '<div class="ubb_editor_wrap" id="'+editor.editor_id+'"><div class="ubb_editor"><div class="ubb_editor_toolbar">';
+        var html = '<div class="ubb_editor_wrap" id="'+editor.id+'"><div class="ubb_editor"><div class="ubb_editor_toolbar">';
         var height = editor.textarea.data('height')||150;
         editor.onselected = [];
-        $.each(editor.buttons_loader, function () {
-            var btn = editor[this];
+        $.each(editor.toolbar, function (i,val) {
+            var btn = editor.buttons[val];
             html += btn.html;
             if (btn.onselected) {
                 editor.onselected.push(btn.onselected);
@@ -109,8 +122,8 @@
         html += '<div class="ubb_editor_iframe_wrap"><iframe frameborder="0" spellcheck="false" style="height:'+height+'px"></iframe></div>';
         html += '</div></div>';
         editor.textarea.after(html).hide();
-        editor.$editor_document = $("#" + editor.editor_id);
-        editor.iframe = editor.$editor_document.find('iframe')[0];
+        editor.$editor_document = $("#" + editor.id);
+        editor.iframe = editor.find('iframe')[0];
         editor.iframe_document = editor.iframe.contentDocument || editor.iframe.contentWindow.document;
         editor.$toolbar = editor.find('.ubb_editor_toolbar');
         editor_init(editor);
@@ -125,7 +138,7 @@
             var $button = $(this),
                 button_type = $button.data('onclick'),
                 button_name = $button.data('name');
-            editor[button_name][button_type](editor,this);
+            editor.buttons[button_name][button_type](editor,this);
         });
         editor.$toolbar.on("click", function (event) {
             if(this === (event.srcElement||event.target)){
@@ -137,50 +150,78 @@
         editor.iframe_document.designMode = "on";
         editor.iframe_document.open();
         if (is_ie678) {
-            editor.iframe_document.write('<html><head><style type="text/css">html,body{height:100%;width:100%;margin:0;padding:0;border:0;overflow:auto;background:#fff;cursor:text;font-size:12px;word-wrap:break-word;}p{padding:0;margin:0;}body{font:12px/1.5 tahoma,arial,\\5b8b\\4f53;text-align:left;}em{font-style:italic;} img{border:0;max-width:100%;cursor:default;} a{color:#16B} a:hover{color:#16B}</style></head></html>');
+            editor.iframe_document.write(
+                '<html>'+
+                    '<head>'+
+                        '<style type="text/css">'+
+                            'html,body{height:100%;width:100%;margin:0;padding:0;border:0;overflow:auto;background:#fff;cursor:text;font-size:12px;word-wrap:break-word;}'+
+                            'p{padding:0;margin:0;}'+
+                            'body{font:12px/1.5 tahoma,arial,\\5b8b\\4f53;text-align:left;color:#000000;}'+
+                            'em{font-style:italic;}'+
+                            'img{border:0;max-width:100%;cursor:default;}'+
+                            'a{color:#16B}'+
+                            'a:hover{color:#16B}'+
+                        '</style>'+
+                    '</head>'+
+                '</html>'
+            );
         } else {
-            editor.iframe_document.write('<html><head><style type="text/css">html,body{height:100%;width:100%;margin:0;padding:0;border:0;overflow:auto;background:#fff;cursor:text;font-size:12px;word-wrap:break-word;}p{padding:0;margin:0;}html{height:1px;overflow:visible;} body{overflow::hidden;font:12px/1.5 tahoma,arial,\\5b8b\\4f53;hidden;text-align:left;}em{font-style:italic;} img{border:0;max-width:100%;} a{color:#16B} a:hover{color:#16B}</style></head></html>');
+            editor.iframe_document.write(
+                '<html>'+
+                    '<head>'+
+                        '<style type="text/css">'+
+                            'html,body{height:100%;width:100%;margin:0;padding:0;border:0;overflow:auto;background:#fff;cursor:text;font-size:12px;word-wrap:break-word;}'+
+                            'p{padding:0;margin:0;}'+
+                            'html{height:1px;overflow:visible;}'+
+                            'body{overflow:hidden;font:12px/1.5 tahoma,arial,\\5b8b\\4f53;text-align:left;color:#000000;}'+
+                            'em{font-style:italic;}'+
+                            'img{border:0;max-width:100%;}'+
+                            'a{color:#16B}'+
+                            'a:hover{color:#16B}'+
+                        '</style>'+
+                    '</head>'+
+                '</html>'
+            );
         }
         editor.iframe_document.close();
         var textarea_value = editor.textarea.text();
         var $iframe = $(editor.iframe);
         var $iframe_document = $(editor.iframe_document);
-        setTimeout(function(){
-            if (textarea_value !== "") {
+        //setTimeout(function(){
+            if (textarea_value !== '') {
                 editor.iframe_document.body.innerHTML = ubb_to_html(editor,textarea_value);
-                editor.iframe.contentWindow.focus();
+                editor.focus();
                 $iframe.height($iframe_document.height());
                 editor.textarea.data('text',$iframe_document.find('body').text());//保存用户输入的纯文字，不包含标签，做内容长度校验使用
             }else{
                 editor.iframe_document.body.innerHTML = '&nbsp;';
             }
-        },1);
+        //},1);
         //当用户使用鼠标在文本上操作的时候，获得该文本区域的样式，使工具栏样式联动
-        $iframe_document.on("mouseup click", function (event) {
+        $iframe_document.on("mouseup", function (event) {
             //时间涉及选中和点击，选中有可能只在某个节点内，那么会同时触发点击
             //判断是否选中文本
             var $parents = null;
-            if (event.type === "mouseup") {
-                var range = get_range(editor);
-                if (is_ie678) {
-                    if (range.text.length !== 0) {
-                        editor.selection_text_container = range.parentElement();
+            var range = get_range(editor);
+            if (is_ie678) {
+                if (range.text.length !== 0) {
+                    editor.selection_text_container = range.parentElement();
+                } else {
+                    editor.selection_text_container = null;
+                }
+            } else {
+                if (range.endContainer !== range.startContainer) {
+                    if (range.commonAncestorContainer.nodeType === 3) {
+                        editor.selection_text_container = range.commonAncestorContainer.parentNode;
                     } else {
-                        editor.selection_text_container = null;
+                        editor.selection_text_container = range.commonAncestorContainer;
                     }
                 } else {
-                    if (range.endContainer !== range.startContainer) {
-                        if (range.commonAncestorContainer.nodeType === 3) {
-                            editor.selection_text_container = range.commonAncestorContainer.parentNode;
-                        } else {
-                            editor.selection_text_container = range.commonAncestorContainer;
-                        }
-                    } else {
-                        editor.selection_text_container = null;
-                    }
+                    editor.selection_text_container = null;
                 }
+            }
             //未选中文本
-            } else if (editor.selection_text_container === null) {
+            if (!editor.selection_text_container) {
                 editor.selection_text_container = event.srcElement ? event.srcElement : event.target;
             }
             if (editor.selection_text_container) {
@@ -206,58 +247,22 @@
         }
 
         //激活复制状态，当用户复制大量html文本进来的时候，对文本进行格式化，保持一致风格
-        $iframe_document.bind("keydown", function (event) {
+        $iframe_document.on("keydown", function (event) {
             var keyStr = key_event_to_string(event);
             if (keyStr === 'Control+V') {
                 editor.has_paste = true;
             }
         });
-        $iframe_document.bind("keyup", function (event) {
+        $iframe_document.on("keyup", function (event) {
             if(editor.has_paste){
                 editor.has_paste = false;
                 return;//如果是使用快捷键复制将禁止键盘事件
             }
             //展示当前字符位置的文字样式
             var range = get_range(editor);
-            if(is_ie678){
-                editor.selection_text_container = range.parentElement();
-            }else{
-                editor.selection_text_container = range.endContainer.parentNode;
-            }
+            editor.selection_text_container = event.srcElement ? event.srcElement : event.target;
             onselected(editor);
             $iframe.height($iframe_document.height());
-            //当工具栏被滚动到看不见的时候...
-            if(false&&!self.toolbarBindScrollEvent){
-                $(window).bind("scroll", function () {
-                    self.toolbarBindScrollEvent = true;
-                    var docScrollTop = $(document).scrollTop();
-                    if (!self.toolbarOffsetTop) {
-                        self.toolbarOffsetTop = $('#' + self.config.toolbarId).offset().top;
-                    }
-                    if (self.toolbarOffsetTop <= docScrollTop) {
-                        if ($.browser.msie && $.browser.version==="6.0") {
-                            //to do
-                        } else {
-                            if (!self.toolbarPositionFixed) {
-                                self.toolbarPositionFixed = true;
-                                $('#' + self.config.toolbarId).css({
-                                    position : "fixed",
-                                    top : "38px",
-                                    width : $('#' + self.config.toolbarId).width() + "px"
-                                });
-                            }
-                        }
-                    } else {
-                        if (self.toolbarPositionFixed) {
-                            self.toolbarPositionFixed = false;
-                            $('#' + self.config.toolbarId).css({
-                                position : "relative",
-                                top : "0"
-                            });
-                        }
-                    }
-                });
-            }
             //即时将编辑器中的内容输入到textarea中
             set_textarea(editor);
         });
@@ -281,6 +286,16 @@
         }
     }
     
+    function onselected(editor){
+        var $parents = $(editor.selection_text_container).parents("font,b,span,p,div");
+        if ($parents.length === 0) {
+            $parents = [];
+        }
+        for (var i in editor.onselected) {
+            editor.onselected[i](editor, editor.selection_text_container, $parents);
+        }
+    }
+    
     function get_range(editor) {
         var content_window = editor.iframe.contentWindow;
         var selection = null;
@@ -295,21 +310,45 @@
         return range;
     }
     
-    function onselected(editor){
-        var $parents = $(editor.selection_text_container).parents("font,b,span,p,div");
-        if ($parents.length === 0) {
-            $parents = [];
-        }
-        for (var i in editor.onselected) {
-            editor.onselected[i](editor, editor.selection_text_container, $parents);
+    function set_range(editor, start, end) {
+        var element = editor.iframe_document.body;
+        if (!is_ie678) {
+            var range = editor.iframe_document.createRange();
+            range.selectNodeContents(element);
+            var text_nodes = get_text_nodes_in(element);
+            var foundStart = false;
+            var char_count = 0, end_char_count;
+
+            for (var i = 0, text_node; text_node = text_nodes[i++]; ) {
+                end_char_count = char_count + text_node.length;
+                if (!foundStart && start >= char_count && (start < end_char_count || (start === end_char_count && i < text_nodes.length))) {
+                    range.setStart(text_node, start - char_count);
+                    foundStart = true;
+                }
+                if (foundStart && end <= end_char_count) {
+                    range.setEnd(text_node, end - char_count);
+                    break;
+                }
+                char_count = end_char_count;
+            }
+
+            var selection = editor.iframe.contentWindow.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+        } else {
+            var text_range = editor.iframe_document.body.createTextRange();
+            text_range.moveToElementText(element);
+            text_range.collapse(true);
+            text_range.moveEnd("character", end);
+            text_range.moveStart("character", start);
+            text_range.select();
         }
     }
     
     //append 向编辑器插入html代码
     //@param html (String||Node @@如果是ie678则传字符串，如果是标准浏览器，则传node)
     function append_html_to_editor(editor, html) {
-        var content_window = editor.iframe.contentWindow;
-        content_window.focus();
+        editor.focus();
         var range = get_range(editor);
         var selection = null;
         if (is_ie678) {
@@ -318,10 +357,23 @@
             range.insertNode(html);
             range.setEndAfter(html);
             range.setStartAfter(html);
-            selection = content_window.getSelection();
+            selection = editor.iframe.contentWindow.getSelection();
             selection.removeAllRanges();
             selection.addRange(range);
         }
+    }
+    
+    function get_text_nodes_in(node) {
+        var text_nodes = [];
+        if (node.nodeType === 3) {
+            text_nodes.push(node);
+        } else {
+            var children = node.childNodes;
+            for (var i = 0, len = children.length; i < len; ++i) {
+                text_nodes.push.apply(text_nodes, get_text_nodes_in(children[i]));
+            }
+        }
+        return text_nodes;
     }
     
     function set_textarea(editor){
