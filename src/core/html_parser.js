@@ -26,8 +26,8 @@
 
     // Regular Expressions for parsing tags and attributes
     //var startTag = /^<([-A-Za-z0-9_]+)((?:\s+\w+(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)>/  作者的原正则属性不允许-，修改如下
-      var startTag = /^<([-A-Za-z0-9_]+)((?:\s+[-\w]+(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)>/,
-        endTag = /^<\/([-A-Za-z0-9_]+)[^>]*>/,
+      var startTag = /^<([\-A-Za-z0-9_]+)((?:\s+[\-\w]+(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)>/,
+        endTag = /^<\/([\-A-Za-z0-9_]+)[^>]*>/,
         attr = /([\-A-Za-z0-9_]+)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
         
     // Empty Elements - HTML 4.01
@@ -62,18 +62,17 @@
             if ( !stack.last() || !special[ stack.last() ] ) {
 
                 // Comment
-                if ( html.indexOf("<!--") == 0 ) {
+                if ( html.indexOf("<!--") === 0 ) {
                     index = html.indexOf("-->");
     
                     if ( index >= 0 ) {
-                        if ( handler.comment )
-                            handler.comment( html.substring( 4, index ) );
+                        handler.comment && handler.comment( html.substring( 4, index ) );
                         html = html.substring( index + 3 );
                         chars = false;
                     }
     
                 // end tag
-                } else if ( html.indexOf("</") == 0 ) {
+                } else if ( html.indexOf("</") === 0 ) {
                     match = html.match( endTag );
     
                     if ( match ) {
@@ -83,7 +82,7 @@
                     }
     
                 // start tag
-                } else if ( html.indexOf("<") == 0 ) {
+                } else if ( html.indexOf("<") === 0 ) {
                     match = html.match( startTag );
     
                     if ( match ) {
@@ -99,17 +98,15 @@
                     var text = index < 0 ? html : html.substring( 0, index );
                     html = index < 0 ? "" : html.substring( index );
                     
-                    if ( handler.chars )
-                        handler.chars( text );
+                    handler.chars && handler.chars( text );
                 }
 
             } else {
                 html = html.replace(new RegExp("(.*)<\/" + stack.last() + "[^>]*>"), function(all, text){
                     text = text.replace(/<!--(.*?)-->/g, "$1")
-                        .replace(/<!\[CDATA\[(.*?)]]>/g, "$1");
+                        .replace(/<!\[CDATA\[(.*?)\]\]>/g, "$1");
 
-                    if ( handler.chars )
-                        handler.chars( text );
+                    handler.chars && handler.chars( text );
 
                     return "";
                 });

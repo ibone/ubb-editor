@@ -54,6 +54,8 @@ $.ubb_editor.add_button('btn_link',
             'a'  : true
         },
         //有一些属性也可以不使用ubb前缀，比如href，它的属性输出形式就一种 href="xxx.com"
+        //凡是不能通过配置来控制其属性值的属性，其标签都必须包含'end]',属性名和值直接输出在ubb标签中，比如a标签
+        //大的规则从来都是被小的规则逼出来的
         allow_attr : 'href'
     }
 );
