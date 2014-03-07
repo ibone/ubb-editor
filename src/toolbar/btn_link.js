@@ -36,12 +36,11 @@ $.ubb_editor.add_button('btn_link',
             /* 如果需要给链接添加target title
             */
         },
-        encode_ubb : function($element,text){
-            var href = $element.attr('href');
-            if(href){
-                return '[aend]href="' + href + '"[end]' + text + '[/a]';
+        encode_ubb : function(attr_value){
+            if(attr_value){
+                return '[aend]href="' + attr_value + '"[end]';
             }else{
-                return text;
+                return '';
             }
         },
         decode_ubb : function(editor){
@@ -53,6 +52,8 @@ $.ubb_editor.add_button('btn_link',
         },
         allow_tag_name : {
             'a'  : true
-        }
+        },
+        //有一些属性也可以不使用ubb前缀，比如href，它的属性输出形式就一种 href="xxx.com"
+        allow_attr : 'href'
     }
 );

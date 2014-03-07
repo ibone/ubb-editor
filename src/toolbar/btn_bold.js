@@ -22,9 +22,10 @@ $.ubb_editor.add_button('btn_bold',
         html :  '<div class="font-btns font-bold">'+
                     '<a href="javascript:;" data-onclick="exec" data-name="btn_bold" title="粗体" unselectable="on">粗体</a>'+
                 '</div>',
-        encode_ubb : function($element,text){
-            return '[b]'+text+'[/b]';
-        },
+        //标签有默认样式则不需要复杂的函数去生成ubb标签，直接使用ubb_map来生成
+        // encode_ubb : function($element,text){
+            // return '[b]'+text+'[/b]';
+        // },
         decode_ubb : function(editor){
             return {
                 '[b]'  : '<strong>',
@@ -34,6 +35,10 @@ $.ubb_editor.add_button('btn_bold',
         allow_tag_name : {
             'b'  : true,
             'strong' : true
-        }
+        },
+        ubb_map : {
+            'b' : 'b',
+            'strong' : 'b'
+        } 
     }
 );

@@ -36,20 +36,22 @@
             },
             onselected : function (editor) {
                 var cur_size = $(editor.selection_text_container).css('font-size');
-                if (!cur_size) {
-                    editor.find('.font-size a').text("小号字体");
-                } else {
+                var default_alt = '小号字体';
+                if (cur_size) {
                     $(editor.size).each(function(){
                         if(this.px === cur_size){
-                            editor.find('.font-size a').text(this.alt);
+                            default_alt = this.alt;
+                            return false;
                         }
                     });
                 }
+                editor.find('.font-size a').text(default_alt);
             },
             html :  '<div class="font-btns font-size">'+
                         '<a href="javascript:;" data-onclick="show_panel" data-name="btn_size" title="字号" unselectable="on">标准字体</a>'+
                     '</div>',
             exec : function (editor, target_button) {
+                var self = this;
                 var size_map = {};
                 for (var i = 0; i < size.length; i++) {
                     size_map[size[i].val+''] = size[i].px;
@@ -62,7 +64,7 @@
                         size = $font.attr('size');
                         px = size_map[size];
                         if (px) {
-                            $font.removeAttr('size').css('font-size',px).attr('ubb-size',size);
+                            $font.removeAttr('size').css('font-size',px).attr(self.allow_attr,size);
                         }
                     }
                 };
@@ -71,19 +73,18 @@
                 editor.find('.font-size a').text($button.attr("title"));
                 change_font();
             },
-            encode_ubb : function($element,text){
-                var attr = $element.attr('ubb-size');
-                if(attr){
-                    return '[font' + attr + ']' + text + '[/font]';
+            encode_ubb : function(attr_value){
+                if(attr_value){
+                    return '[font' + attr_value + ']';
                 }else{
-                    return text;
+                    return '';
                 }
             },
             decode_ubb : function(editor){
                 var size = editor.get_config('size');
                 var ubb_map = {};
                 for (var i = 0; i < size.length; i++) {
-                    ubb_map['[font' + size[i].val + ']'] = '<font ubb-size="'+ size[i].val +'" style="font-size:' + size[i].px + '">';
+                    ubb_map['[font' + size[i].val + ']'] = '<font '+ this.allow_attr +'="'+ size[i].val +'" style="font-size:' + size[i].px + '">';
                 }
                 ubb_map['[/font]'] = '</font>';
                 return ubb_map;
@@ -91,7 +92,8 @@
             allow_tag_name : {
                 'font'  : true,
                 'span' : true
-            }
+            },
+            allow_attr : 'ubb-size'
         }
     );
 })();

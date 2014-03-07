@@ -112,10 +112,10 @@
         var height = editor.textarea.data('height')||150;
         editor.onselected = [];
         $.each(editor.toolbar, function (i,val) {
-            var btn = editor.buttons[val];
-            html += btn.html;
-            if (btn.onselected) {
-                editor.onselected.push(btn.onselected);
+            var button = editor.buttons[val];
+            html += button.html;
+            if (button.onselected) {
+                editor.onselected.push(button.onselected);
             }
         });
         html += '</div>';
@@ -145,6 +145,10 @@
                 editor.hide_panel();
             }
             stop_bubble(event);
+        });
+        $.each(editor.toolbar, function (i,val) {
+            var button = editor.buttons[val];
+            button.init && button.init(editor);
         });
         //初始化iframe内容，涉及编辑器和预览的样式统一
         editor.iframe_document.designMode = "on";
@@ -204,20 +208,12 @@
             var $parents = null;
             var range = get_range(editor);
             if (is_ie678) {
-                if (range.text.length !== 0) {
-                    editor.selection_text_container = range.parentElement();
-                } else {
-                    editor.selection_text_container = null;
-                }
+                editor.selection_text_container = range.parentElement();
             } else {
-                if (range.endContainer !== range.startContainer) {
-                    if (range.commonAncestorContainer.nodeType === 3) {
-                        editor.selection_text_container = range.commonAncestorContainer.parentNode;
-                    } else {
-                        editor.selection_text_container = range.commonAncestorContainer;
-                    }
+                if (range.commonAncestorContainer.nodeType === 3) {
+                    editor.selection_text_container = range.commonAncestorContainer.parentNode;
                 } else {
-                    editor.selection_text_container = null;
+                    editor.selection_text_container = range.commonAncestorContainer;
                 }
             }
             //未选中文本
@@ -232,15 +228,16 @@
             set_textarea(editor);
         });
         
+        //粘贴处理
         if(is_ie678){
             editor.iframe.contentWindow.document.documentElement.attachEvent("onpaste", function(event){
-                paste(event,editor.iframe,function(){
+                paste(editor, event, function(){
                     set_textarea(editor);
                 });
             });
         }else{
             $iframe_document.on("paste", function (event) {
-                paste(event,editor.iframe,function(){
+                paste(editor, event, function(){
                     set_textarea(editor);
                 });
             });
@@ -287,31 +284,32 @@
     }
     
     function onselected(editor){
-        var $parents = $(editor.selection_text_container).parents("font,b,span,p,div");
-        if ($parents.length === 0) {
-            $parents = [];
-        }
         for (var i in editor.onselected) {
-            editor.onselected[i](editor, editor.selection_text_container, $parents);
+            editor.onselected[i](editor);
         }
     }
     
     function get_range(editor) {
-        var content_window = editor.iframe.contentWindow;
-        var selection = null;
-        var range = null;
         if (is_ie678) {
-            selection = content_window.document.selection;
-            range = selection.createRange();
+            return get_selection(editor).createRange();
         } else {
-            selection = content_window.getSelection();
-            range = selection.getRangeAt(0);
+            return get_selection(editor).getRangeAt(0);
         }
-        return range;
     }
     
-    function set_range(editor, start, end) {
-        var element = editor.iframe_document.body;
+    function get_selection(editor) {
+        var content_window = editor.iframe.contentWindow;
+        if (is_ie678) {
+            return content_window.document.selection;
+        } else {
+            return content_window.getSelection();
+        }
+    }
+    
+    function set_range(editor, start, end, element) {
+        if(!element){
+            element = editor.iframe_document.body;
+        }
         if (!is_ie678) {
             var range = editor.iframe_document.createRange();
             range.selectNodeContents(element);
@@ -354,12 +352,13 @@
         if (is_ie678) {
             range.pasteHTML(html);
         } else {
-            range.insertNode(html);
-            range.setEndAfter(html);
-            range.setStartAfter(html);
-            selection = editor.iframe.contentWindow.getSelection();
-            selection.removeAllRanges();
-            selection.addRange(range);
+            // range.insertNode(html);
+            // range.setEndAfter(html);
+            // range.setStartAfter(html);
+            // selection = editor.iframe.contentWindow.getSelection();
+            // selection.removeAllRanges();
+            // selection.addRange(range);
+            editor.exec_command('inserthtml',html);
         }
     }
     
