@@ -49,6 +49,7 @@ describe("标签font编码", function() {
         $('textarea').remove();
         $('.ubb_editor_wrap').remove();
     });
+    //根据特有属性来赋值ubb
     it("标签font编码的color", function() {
         $('textarea').ubb_editor(function(editor){
             editor.iframe_document.body.innerHTML = '<font ubb-color="000000">test</font>';
@@ -59,17 +60,6 @@ describe("标签font编码", function() {
         $('textarea').ubb_editor(function(editor){
             editor.iframe_document.body.innerHTML = '<font ubb-size="3">test</font>';
             expect(html_to_ubb(editor)).toBe('[font3]test[/font]');
-        });
-    });
-    describe("样式极端测试", function() {
-        it("父级color不赋值给子节点", function() {
-            $('textarea').ubb_editor(function(editor){
-                editor.iframe_document.body.innerHTML = '<font style="color:#bb0000">te<font size="3">st</font></font>';
-                editor.buttons.btn_color.exec(editor,editor.find('.ubb_color_panel a')[0]);
-                editor.buttons.btn_size.exec(editor,editor.find('.ubb_size_panel a')[0]);
-                jasmine.log(editor.iframe_document.body.innerHTML);
-                expect(html_to_ubb(editor)).toBe('[fontbb0000]te[font3]st[/font][/font]');
-            });
         });
     });
 });
@@ -203,6 +193,18 @@ describe("特有属性生成", function() {
     it("颜色属性生成不能含有非配置色", function() {
         
     });
+    describe("样式极端测试", function() {
+        it("父级color不赋值给子节点", function() {
+            $('textarea').ubb_editor(function(editor){
+                editor.iframe_document.body.innerHTML = '<font style="color:#bb0000">te<font size="3">st</font></font>';
+                editor.buttons.btn_color.exec(editor,editor.find('.ubb_color_panel a')[0]);
+                editor.buttons.btn_size.exec(editor,editor.find('.ubb_size_panel a')[0]);
+                jasmine.log(editor.iframe_document.body.innerHTML);
+                var html = editor.iframe_document.body.innerHTML;
+                expect(html_to_ubb(editor)).toBe('[fontbb0000]te[font3]st[/font][/font]');
+            });
+        });
+    });
 });
 describe("按钮生成", function() {
     beforeEach(function(){
@@ -248,7 +250,7 @@ describe("按钮点击功能正常", function() {
 
     });
     it("链接按钮正常", function() {
-
+        //在ie7下会失去焦点，然后功能不正常
     });
 });
 describe("文本解码", function() {

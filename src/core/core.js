@@ -106,6 +106,24 @@
             },
             focus : function(){
                 this.iframe.contentWindow.focus();
+            },
+            change_height : function(){
+                var default_height = 150;
+                var html = this.iframe_document.body.innerHTML;
+                if(!$('#ubb_temp_div').length){
+                    $('body').append('<div id="ubb_temp_div" style="font-size:12px;line-height:1.5; width:622px;"></div>');
+                }
+                var div = $('#ubb_temp_div');
+                div.html(html);
+                var height = div.height();
+                if( height < default_height ){
+                    height = default_height;
+                }else{
+                    height = height + 24;
+                }
+                this.$iframe.animate({
+                    height:height
+                },300);
             }
         });
         var html = '<div class="ubb_editor_wrap" id="'+editor.id+'"><div class="ubb_editor"><div class="ubb_editor_toolbar">';
@@ -158,7 +176,8 @@
                 '<html>'+
                     '<head>'+
                         '<style type="text/css">'+
-                            'html,body{height:100%;width:100%;margin:0;padding:0;border:0;overflow:auto;background:#fff;cursor:text;font-size:12px;word-wrap:break-word;}'+
+                            'html,body{height:100%;width:100%;margin:0;padding:0;border:0;overflow:auto;background:#fff;cursor:text;word-wrap:break-word;}'+
+                            'html{height:1px;overflow:visible;}'+
                             'p{padding:0;margin:0;}'+
                             'body{font:12px/1.5 tahoma,arial,\\5b8b\\4f53;text-align:left;color:#000000;}'+
                             'em{font-style:italic;}'+
@@ -174,7 +193,7 @@
                 '<html>'+
                     '<head>'+
                         '<style type="text/css">'+
-                            'html,body{height:100%;width:100%;margin:0;padding:0;border:0;overflow:auto;background:#fff;cursor:text;font-size:12px;word-wrap:break-word;}'+
+                            'html,body{height:100%;width:100%;margin:0;padding:0;border:0;overflow:auto;background:#fff;cursor:text;word-wrap:break-word;}'+
                             'p{padding:0;margin:0;}'+
                             'html{height:1px;overflow:visible;}'+
                             'body{overflow:hidden;font:12px/1.5 tahoma,arial,\\5b8b\\4f53;text-align:left;color:#000000;}'+
@@ -189,13 +208,13 @@
         }
         editor.iframe_document.close();
         var textarea_value = editor.textarea.text();
-        var $iframe = $(editor.iframe);
-        var $iframe_document = $(editor.iframe_document);
+        var $iframe = editor.$iframe = $(editor.iframe);
+        var $iframe_document = editor.$iframe_document = $(editor.iframe_document);
         //setTimeout(function(){
             if (textarea_value !== '') {
                 editor.iframe_document.body.innerHTML = ubb_to_html(editor,textarea_value);
                 editor.focus();
-                $iframe.height($iframe_document.height());
+                editor.change_height();
                 editor.textarea.data('text',$iframe_document.find('body').text());//保存用户输入的纯文字，不包含标签，做内容长度校验使用
             }else{
                 editor.iframe_document.body.innerHTML = '&nbsp;';
@@ -230,7 +249,7 @@
         
         //粘贴处理
         if(is_ie678){
-            editor.iframe.contentWindow.document.documentElement.attachEvent("onpaste", function(event){
+            editor.iframe_document.documentElement.attachEvent("onpaste", function(event){
                 paste(editor, event, function(){
                     set_textarea(editor);
                 });
@@ -259,7 +278,7 @@
             var range = get_range(editor);
             editor.selection_text_container = event.srcElement ? event.srcElement : event.target;
             onselected(editor);
-            $iframe.height($iframe_document.height());
+            editor.change_height();
             //即时将编辑器中的内容输入到textarea中
             set_textarea(editor);
         });
@@ -345,19 +364,20 @@
     
     //append 向编辑器插入html代码
     //@param html (String||Node @@如果是ie678则传字符串，如果是标准浏览器，则传node)
-    function append_html_to_editor(editor, html) {
+    function append_html_to_editor(editor, html, range) {
         editor.focus();
-        var range = get_range(editor);
         var selection = null;
         if (is_ie678) {
+            if(!range){
+                range = get_range(editor);
+            }
             range.pasteHTML(html);
         } else {
-            // range.insertNode(html);
-            // range.setEndAfter(html);
-            // range.setStartAfter(html);
-            // selection = editor.iframe.contentWindow.getSelection();
-            // selection.removeAllRanges();
-            // selection.addRange(range);
+            if(range){
+                selection = get_selection(editor);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            }
             editor.exec_command('inserthtml',html);
         }
     }

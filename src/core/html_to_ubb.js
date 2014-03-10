@@ -66,11 +66,11 @@
                 }
             },
             end: function( node_name ) {
-                elements.length -= 1;
                 if(cur_parent_node_be_used){
                     ubb_text += '[/' + (default_ubb_map[node_name]||node_name) + ']';
                 }
-                if(elements.length !== 0){
+                if(elements.length >= 2){
+                    elements.length -= 1;
                     cur_parent_node_be_used = elements[ elements.length - 1 ].be_used;
                 }else{
                     cur_parent_node_be_used = false;

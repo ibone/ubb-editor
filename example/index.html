@@ -6,6 +6,7 @@
         <title>ubb-editor</title>
         <link href="css/editor.css" media="all" rel="stylesheet" type="text/css"/>
         <style>
+            *{padding:0;margin:0;}
             textarea{font:12px/1.5 tahoma,arial,\5b8b\4f53;}
             pre{
             padding: 5px;
@@ -23,7 +24,7 @@
     </head>
     <body>
         <p>ubb字符串输出:</p>
-        <textarea id="editor1" style="width: 600px;height:100px;">[b]粗体测试[/b][fontdd0000]颜色测试[/font][font3]字号测试[/font][aend]href="http://google.com"[end]链接测试[/a]</textarea>
+        <textarea id="editor1" style="width: 600px;height:100px;"></textarea>
         <p>编辑器初始化:</p>
         <pre style="width:600px;">$('#editor1').ubb_editor();</pre>
         <p>html字符串输出:</p>
