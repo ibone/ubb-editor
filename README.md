@@ -10,7 +10,7 @@ ubb-editor是类ubb代码格式的可视化编辑器，目的是将用户编辑�
         [p][/p]
         <p></p>
     
-        [a end]href="example.com"[end][/a]
+        [aend]href="example.com"[end][/a]
         <a href="example.com"></a>
     
         [br]
