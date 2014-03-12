@@ -83,16 +83,16 @@
                 }
             },
             find : function(select_str){
-                return editor.$editor_document.find(select_str);
+                return editor.$root.find(select_str);
             },
             data : function(key,val){
                 if(typeof key !== 'string'){
                     return null;
                 }
                 if(typeof val !== 'undefined'){
-                    return this.$editor_document.data(key,val);
+                    return this.$root.data(key,val);
                 }else{
-                    return this.$editor_document.data(key);
+                    return this.$root.data(key);
                 }
             },
             get_config : function(key){
@@ -110,20 +110,22 @@
             change_height : function(){
                 var default_height = 150;
                 var html = this.iframe_document.body.innerHTML;
-                if(!$('#ubb_temp_div').length){
-                    $('body').append('<div id="ubb_temp_div" style="font-size:12px;line-height:1.5; width:622px;"></div>');
-                }
-                var div = $('#ubb_temp_div');
-                div.html(html);
+                var tmp_iframe = create_iframe(editor.$root,
+                                               'ubb_get_content_height',
+                                               '<div id="ubb_temp_div">'+ html +'</div>',
+                                               'width:'+ this.$iframe.width() +'px;'
+                                              );
+                var iframe_document = tmp_iframe.contentDocument || tmp_iframe.contentWindow.document;
+                var div = $(iframe_document.body).find('#ubb_temp_div');
                 var height = div.height();
-                if( height < default_height ){
+                if( height < (default_height - 20) ){
                     height = default_height;
                 }else{
-                    height = height + 24;
+                    height = height + 20;
                 }
-                this.$iframe.animate({
+                this.$iframe.css({
                     height:height
-                },300);
+                });
             }
         });
         var html = '<div class="ubb_editor_wrap" id="'+editor.id+'"><div class="ubb_editor"><div class="ubb_editor_toolbar">';
@@ -132,7 +134,8 @@
         $.each(editor.toolbar, function (i,val) {
             var button = editor.buttons[val];
             html += button.html;
-            if (button.onselected) {
+            //判断button是否有配置选中反馈函数
+            if(button.onselected){
                 editor.onselected.push(button.onselected);
             }
         });
@@ -140,7 +143,7 @@
         html += '<div class="ubb_editor_iframe_wrap"><iframe frameborder="0" spellcheck="false" style="height:'+height+'px"></iframe></div>';
         html += '</div></div>';
         editor.textarea.after(html).hide();
-        editor.$editor_document = $("#" + editor.id);
+        editor.$root = $("#" + editor.id);
         editor.iframe = editor.find('iframe')[0];
         editor.iframe_document = editor.iframe.contentDocument || editor.iframe.contentWindow.document;
         editor.$toolbar = editor.find('.ubb_editor_toolbar');
@@ -169,57 +172,14 @@
             button.init && button.init(editor);
         });
         //初始化iframe内容，涉及编辑器和预览的样式统一
-        editor.iframe_document.designMode = "on";
-        editor.iframe_document.open();
-        if (is_ie678) {
-            editor.iframe_document.write(
-                '<html>'+
-                    '<head>'+
-                        '<style type="text/css">'+
-                            'html,body{height:100%;width:100%;margin:0;padding:0;border:0;overflow:auto;background:#fff;cursor:text;word-wrap:break-word;}'+
-                            'html{height:1px;overflow:visible;}'+
-                            'p{padding:0;margin:0;}'+
-                            'body{font:12px/1.5 tahoma,arial,\\5b8b\\4f53;text-align:left;color:#000000;}'+
-                            'em{font-style:italic;}'+
-                            'img{border:0;max-width:100%;cursor:default;}'+
-                            'a{color:#16B}'+
-                            'a:hover{color:#16B}'+
-                        '</style>'+
-                    '</head>'+
-                '</html>'
-            );
-        } else {
-            editor.iframe_document.write(
-                '<html>'+
-                    '<head>'+
-                        '<style type="text/css">'+
-                            'html,body{height:100%;width:100%;margin:0;padding:0;border:0;overflow:auto;background:#fff;cursor:text;word-wrap:break-word;}'+
-                            'p{padding:0;margin:0;}'+
-                            'html{height:1px;overflow:visible;}'+
-                            'body{overflow:hidden;font:12px/1.5 tahoma,arial,\\5b8b\\4f53;text-align:left;color:#000000;}'+
-                            'em{font-style:italic;}'+
-                            'img{border:0;max-width:100%;}'+
-                            'a{color:#16B}'+
-                            'a:hover{color:#16B}'+
-                        '</style>'+
-                    '</head>'+
-                '</html>'
-            );
-        }
-        editor.iframe_document.close();
+        init_iframe(editor.iframe);
         var textarea_value = editor.textarea.text();
         var $iframe = editor.$iframe = $(editor.iframe);
         var $iframe_document = editor.$iframe_document = $(editor.iframe_document);
-        //setTimeout(function(){
-            if (textarea_value !== '') {
-                editor.iframe_document.body.innerHTML = ubb_to_html(editor,textarea_value);
-                editor.focus();
-                editor.change_height();
-                editor.textarea.data('text',$iframe_document.find('body').text());//保存用户输入的纯文字，不包含标签，做内容长度校验使用
-            }else{
-                editor.iframe_document.body.innerHTML = '&nbsp;';
-            }
-        //},1);
+        editor.iframe_document.body.innerHTML = ubb_to_html(editor,textarea_value);
+        editor.focus();
+        
+        set_textarea(editor);
         //当用户使用鼠标在文本上操作的时候，获得该文本区域的样式，使工具栏样式联动
         $iframe_document.on("mouseup", function (event) {
             //时间涉及选中和点击，选中有可能只在某个节点内，那么会同时触发点击
@@ -278,8 +238,6 @@
             var range = get_range(editor);
             editor.selection_text_container = event.srcElement ? event.srcElement : event.target;
             onselected(editor);
-            editor.change_height();
-            //即时将编辑器中的内容输入到textarea中
             set_textarea(editor);
         });
         //IE下光标会丢失
@@ -316,6 +274,14 @@
         }
     }
     
+    function create_range(editor) {
+        if (is_ie678) {
+            return editor.iframe_document.body.createTextRange();
+        } else {
+            return editor.iframe_document.createRange();
+        }
+    }
+    
     function get_selection(editor) {
         var content_window = editor.iframe.contentWindow;
         if (is_ie678) {
@@ -329,8 +295,8 @@
         if(!element){
             element = editor.iframe_document.body;
         }
+        var range = create_range(editor);
         if (!is_ie678) {
-            var range = editor.iframe_document.createRange();
             range.selectNodeContents(element);
             var text_nodes = get_text_nodes_in(element);
             var foundStart = false;
@@ -349,16 +315,15 @@
                 char_count = end_char_count;
             }
 
-            var selection = editor.iframe.contentWindow.getSelection();
+            var selection = get_selection(editor);
             selection.removeAllRanges();
             selection.addRange(range);
         } else {
-            var text_range = editor.iframe_document.body.createTextRange();
-            text_range.moveToElementText(element);
-            text_range.collapse(true);
-            text_range.moveEnd("character", end);
-            text_range.moveStart("character", start);
-            text_range.select();
+            range.moveToElementText(element);
+            range.collapse(true);
+            range.moveEnd("character", end);
+            range.moveStart("character", start);
+            range.select();
         }
     }
     
@@ -398,6 +363,15 @@
     function set_textarea(editor){
         setTimeout(function(){
             editor.textarea.text(html_to_ubb(editor))
-                           .data('text',$(editor.iframe_document.body).text());
+                           .data('text',$(editor.iframe_document.body).text());//保存用户输入的纯文字，不包含标签，做内容长度校验使用
+            editor.change_height();
         },1);
+    }
+    
+    function prevent_default(event){
+        if(event.preventDefault){
+            event.preventDefault();
+        }else{
+            event.returnValue = false;
+        }
     }

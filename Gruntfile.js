@@ -31,6 +31,7 @@ module.exports = function (grunt) {
                     'src/core/paste.js',
                     'src/core/ubb_to_html.js',
                     'src/core/html_parser.js',
+                    'src/core/iframe.js',
                     'src/core/html_to_ubb.js',
                     'src/core/outro.js',
                     'src/toolbar/btn_bold.js',
