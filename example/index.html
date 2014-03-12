@@ -5,41 +5,13 @@
         <meta http-equiv="x-ua-compatible" content="ie=8">
         <title>ubb-editor</title>
         <link href="css/editor.css" media="all" rel="stylesheet" type="text/css"/>
-        <style>
-            *{padding:0;margin:0;}
-            textarea{font:12px/1.5 tahoma,arial,\5b8b\4f53;}
-            pre{
-            padding: 5px;
-            font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
-            margin-bottom: 10px;
-            background-color: #EEE;
-            overflow: auto;
-            width: auto;
-            width: 650px !ie7;
-            padding-bottom: 20px !ie7;
-            max-height: 600px;
-            word-wrap: break-word;
-            }
-        </style>
     </head>
     <body>
-        <p>ubb字符串输出:</p>
         <textarea id="editor1" style="width: 600px;height:100px;"></textarea>
-        <p>编辑器初始化:</p>
-        <pre style="width:600px;">$('#editor1').ubb_editor();</pre>
-        <p>html字符串输出:</p>
-        <pre id="J_editor_content" style="width:600px;"></pre>
         <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
         <script src="../dist/ubb_editor.js"></script>
         <script>
-            $('#editor1').ubb_editor(function(editor){
-                var editor_con_pre = $('#J_editor_content');
-                function show_html(){
-                    editor_con_pre.html(editor.iframe_document.body.innerHTML.replace(/</g,'&lt').replace(/>/g,'&gt'));
-                    setTimeout(show_html,1000);
-                }
-                show_html();
-            }).show();
+            $('#editor1').ubb_editor();
         </script>
     </body>
 </html>

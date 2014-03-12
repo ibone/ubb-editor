@@ -4,7 +4,7 @@ $.ubb_editor.add_button('btn_link',
             if (editor.find('.ubb_link_panel').length === 0) {
                 var link_panel_html = 
                     '<div class="ubb_link_panel">'+
-                        '<div class="title">将网址粘贴到下面框中：</div>'+
+                        '<div class="title">将链接粘贴到下面框中：</div>'+
                         '<form>'+
                             '<a class="confirm_btn" href="javascript:;" data-onclick="exec" data-name="btn_link">确定</a>'+
                             '<label>'+

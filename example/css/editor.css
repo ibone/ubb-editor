@@ -181,20 +181,19 @@
 .ubb_editor .ubb_link_panel{
     top:35px;
     left:10px;
-    position:relative;
-    padding:12px 15px;
+    padding:8px 8px;
     border:1px solid #ddd;
     position:absolute;
     z-index:9997;
-    width:350px;
+    width:345px;
     background:#fff;
     border-radius:3px;
 }
 .ubb_editor .ubb_link_panel .title{
-    padding-bottom:10px;
+    padding-bottom:5px;
     font-weight:normal;
-    color:#333;
     font-size:12px;
+    color:#666;
 }
 .ubb_editor .ubb_link_panel label {
     vertical-align: top;
@@ -206,7 +205,6 @@
     overflow: hidden;
     background: #FFF;
     position: relative;
-    margin-right: 10px;
     width:290px;
 } 
 .ubb_editor .ubb_link_panel input{
@@ -223,14 +221,13 @@
     text-align: left;
 }
 .ubb_editor .ubb_link_panel a{
-    float:right;
-    background:url(../../image/btn.gif) repeat-x;
-    height:22px;
-    line-height:22px;
-    color:#333;
+    height:24px;
+    line-height:24px;
+    color:#666;
     font-size:12px;
     display:inline-block;
     padding:0 10px;
-    border-radius:3px;
-    border:1px solid #ccc;
+    background:#efefef;
+    border-radius:2px;
+    float:right;
 }
