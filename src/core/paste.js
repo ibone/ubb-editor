@@ -21,7 +21,7 @@
             paste_text = tmp_container.contentWindow.document.body.innerHTML;
             $(tmp_container).remove();
             new_text = filter_paste_text(paste_text);
-            append_html_to_editor(editor, new_text, old_range);
+            paste_html(editor, new_text, old_range);
             prevent_default(event);
             callback();
         }else{
@@ -48,7 +48,7 @@
                 } 
                 $(tmp_container).remove();
                 new_text = filter_paste_text(paste_text); 
-                append_html_to_editor(editor, new_text, old_range);
+                paste_html(editor, new_text, old_range);
                 callback();
             },1);
         }

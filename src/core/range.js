@@ -26,6 +26,19 @@
         }
     }
     
+    function get_text_nodes_in(node) {
+        var text_nodes = [];
+        if (node.nodeType === 3) {
+            text_nodes.push(node);
+        } else {
+            var children = node.childNodes;
+            for (var i = 0, len = children.length; i < len; ++i) {
+                text_nodes.push.apply(text_nodes, get_text_nodes_in(children[i]));
+            }
+        }
+        return text_nodes;
+    }
+    
     //改变range的范围
     function set_range(editor, start, end, element) {
         if(!element){
@@ -60,5 +73,25 @@
             range.moveEnd("character", end);
             range.moveStart("character", start);
             range.select();
+        }
+    }
+    
+    //append 向编辑器插入html代码
+    //@param html (String||Node @@如果是ie678则传字符串，如果是标准浏览器，则传node)
+    function paste_html(editor, html, range) {
+        editor.focus();
+        var selection = null;
+        if (is_ie678) {
+            if(!range){
+                range = get_range(editor);
+            }
+            range.pasteHTML(html);
+        } else {
+            if(range){
+                selection = get_selection(editor);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            }
+            editor.exec_command('inserthtml',html);
         }
     }
