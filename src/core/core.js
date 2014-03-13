@@ -42,7 +42,7 @@
                         this.hide_panel();;
                         this.iframe_document.execCommand(command, false, value);
                         this.focus();
-                        this.trigger('on_content_change');
+                        this.fire('on_content_change');
                     },
                     hide_panel : function() {
                         if (this.cur_panel) {
@@ -94,7 +94,7 @@
                     focus : function(){
                         this.iframe.contentWindow.focus();
                     },
-                    trigger : function(event_name){
+                    fire : function(event_name){
                         this.$root.trigger(event_name);
                     },
                     on : function(event_name,callback){
@@ -156,7 +156,7 @@
         var $iframe_document = editor.$iframe_document = $(editor.iframe_document);
         editor.iframe_document.body.innerHTML = ubb_to_html(editor,editor.$textarea.text());
         editor.focus();
-        editor.trigger('content_change');
+        editor.fire('content_change');
         
         //编辑菜单事件初始化
         $("body").on("click", function () {
@@ -189,13 +189,13 @@
         if(is_ie678){
             editor.iframe_document.documentElement.attachEvent("onpaste", function(event){
                 paste(editor, event, function(){
-                    editor.trigger('content_change');
+                    editor.fire('content_change');
                 });
             });
         }else{
             $iframe_document.on("paste", function (event) {
                 paste(editor, event, function(){
-                    editor.trigger('content_change');
+                    editor.fire('content_change');
                 });
             });
         }
@@ -204,7 +204,7 @@
         $iframe_document.on("keyup", function (event) {
             //展示当前字符位置的文字样式
             onselected(editor,event);
-            editor.trigger('content_change');
+            editor.fire('content_change');
         });
         //IE下光标会丢失
         if (is_ie678) {
