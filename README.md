@@ -1,6 +1,6 @@
 ubb-editor是类ubb代码格式的可视化编辑器，目的是将用户编辑出来的内容不再保存成html的格式，而是类ubb的格式。
 适用于编辑样式比较简单的文章和评论。 
-![Demo](https://github.com/ibone/ubb-editor/blob/master/readme/editor.png)
+![Demo](https://github.com/ibone/ubb-editor/blob/master/readme/editor.png?raw=true)
 
 ######默认可编辑的样式
     粗体，字号，字体颜色，加链接
