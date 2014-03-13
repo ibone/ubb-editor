@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Ubb-editor : web编辑器" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Ubb-editor</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/ibone/ubb-editor">View on GitHub</a>
+
+          <h1 id="project_title">Ubb-editor</h1>
+          <h2 id="project_tagline">web编辑器</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/ibone/ubb-editor/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/ibone/ubb-editor/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p>ubb-editor是类ubb代码格式的可视化编辑器，目的是将用户编辑出来的内容不再保存成html的格式，而是类ubb的格式。
+适用于编辑样式比较简单的文章和评论。</p>
+
+<h6>
+<a name="%E9%BB%98%E8%AE%A4%E5%8F%AF%E7%BC%96%E8%BE%91%E7%9A%84%E6%A0%B7%E5%BC%8F" class="anchor" href="#%E9%BB%98%E8%AE%A4%E5%8F%AF%E7%BC%96%E8%BE%91%E7%9A%84%E6%A0%B7%E5%BC%8F"><span class="octicon octicon-link"></span></a>默认可编辑的样式</h6>
+
+<pre><code>粗体，字号，字体颜色，加链接
+（可通过添加插件来增加更多功能）
+</code></pre>
+
+<h6>
+<a name="%E4%BC%98%E7%82%B9" class="anchor" href="#%E4%BC%98%E7%82%B9"><span class="octicon octicon-link"></span></a>优点：</h6>
+
+<pre><code>1.输出样式严格控制，编辑菜单上未出现的样式，是不会输出的
+2.比较其他保存原代码的编辑器，保存的内容更少
+3.真正的轻量（因为功能少）
+4.有单元测试（这个能当优点么）
+</code></pre>
+
+<h6>
+<a name="%E7%BC%BA%E7%82%B9" class="anchor" href="#%E7%BC%BA%E7%82%B9"><span class="octicon octicon-link"></span></a>缺点：</h6>
+
+<pre><code>1.在输出的时候，需要对内容解码（前端和后端都行）
+2.文本编辑功能有限（功能太多的话，感觉ubb这样的模式就不适合了）
+3.目前就我一个人在维护=。=
+</code></pre>
+
+<h6>
+<a name="%E5%85%BC%E5%AE%B9%E6%80%A7" class="anchor" href="#%E5%85%BC%E5%AE%B9%E6%80%A7"><span class="octicon octicon-link"></span></a>兼容性：</h6>
+
+<pre><code>IE 6-9
+Chrome
+firefox
+</code></pre>
+
+<h6>
+<a name="%E4%BF%9D%E5%AD%98%E7%9A%84%E8%A7%84%E5%88%99%E5%A6%82%E4%B8%8B" class="anchor" href="#%E4%BF%9D%E5%AD%98%E7%9A%84%E8%A7%84%E5%88%99%E5%A6%82%E4%B8%8B"><span class="octicon octicon-link"></span></a>保存的规则如下：</h6>
+
+<pre><code>    [font4][/font]
+    &lt;font style="font-size:18px;"&gt;&lt;/font&gt;
+
+    [font666666][/font]
+    &lt;font style="color:#666666;"&gt;&lt;/font&gt;
+
+    [b][/b]
+    &lt;strong&gt;&lt;/strong&gt;
+
+    [p][/p]
+    &lt;p&gt;&lt;/p&gt;
+
+    [aend]href="example.com"[end][/a]
+    &lt;a href="example.com"&gt;&lt;/a&gt;
+
+    [br]
+    &lt;br/&gt;
+    ......
+    一个标签最多配一个属性
+    多个属性需要多个标签来表达
+    属性如果是自定义的，这需要当内容来处理，比如a标签
+</code></pre>
+
+<h6>
+<a name="%E4%BD%BF%E7%94%A8" class="anchor" href="#%E4%BD%BF%E7%94%A8"><span class="octicon octicon-link"></span></a>使用：</h6>
+
+<pre><code>&lt;textarea id="editor"&gt;&lt;/textarea&gt;
+&lt;script&gt;
+    $('#editor').ubb_editor();
+&lt;/script&gt;
+</code></pre>
+
+<h6>
+<a name="%E5%AE%89%E8%A3%85" class="anchor" href="#%E5%AE%89%E8%A3%85"><span class="octicon octicon-link"></span></a>安装：</h6>
+
+<pre><code>需要安装grunt来生成完整的ubb_editor.js
+安装教程:http://www.gruntjs.org
+生成目录dist/ubb_editor.js
+</code></pre>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Ubb-editor maintained by <a href="https://github.com/ibone">ibone</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
