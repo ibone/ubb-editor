@@ -6,7 +6,7 @@
                 '[end]' : '>',
                 '[s]' : '&nbsp;'
             };
-        var toolbar = editor.toolbar;
+        var toolbar = editor.get_config('toolbar');
         var buttons = editor.buttons;
         var buttons_length = toolbar.length;
         if(!editor.ubb_map){

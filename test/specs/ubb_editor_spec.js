@@ -197,8 +197,8 @@ describe("特有属性生成", function() {
         it("父级color不赋值给子节点", function() {
             $('textarea').ubb_editor(function(editor){
                 editor.iframe_document.body.innerHTML = '<font style="color:#bb0000">te<font size="3">st</font></font>';
-                editor.buttons.btn_color.exec(editor,editor.find('.ubb_color_panel a')[0]);
-                editor.buttons.btn_size.exec(editor,editor.find('.ubb_size_panel a')[0]);
+                editor.buttons.color.exec(editor,editor.find('.ubb_color_panel a')[0]);
+                editor.buttons.size.exec(editor,editor.find('.ubb_size_panel a')[0]);
                 jasmine.log(editor.iframe_document.body.innerHTML);
                 var html = editor.iframe_document.body.innerHTML;
                 expect(html_to_ubb(editor)).toBe('[fontbb0000]te[font3]st[/font][/font]');
@@ -216,7 +216,7 @@ describe("按钮生成", function() {
     });
     it("生成两个按钮", function() {
         $('textarea').ubb_editor({
-            toolbar : ['btn_bold', 'btn_color']
+            toolbar : ['bold', 'color']
         },function(editor){
             editor.iframe_document.body.innerHTML = '<p>test</p>';
             expect(editor.find('.font-btns').length).toBe(2);
@@ -224,7 +224,7 @@ describe("按钮生成", function() {
     });
     it("只有btn_bold按钮", function() {
         $('textarea').ubb_editor({
-            toolbar : ['btn_bold']
+            toolbar : ['bold']
         },function(editor){
             editor.iframe_document.body.innerHTML = '<p>test</p>';
             expect(editor.find('.font-bold').length).toBe(1);

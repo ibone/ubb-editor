@@ -20,7 +20,7 @@
                 'div' : 'p',
                 'br'  : 'br'
             },
-            toolbar = editor.toolbar,
+            toolbar = editor.get_config('toolbar'),
             buttons = editor.buttons,
             toolbar_length = toolbar.length;
             

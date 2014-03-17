@@ -35,12 +35,11 @@ module.exports = function (grunt) {
                     'src/core/range.js',
                     'src/core/html_to_ubb.js',
                     'src/core/outro.js',
-                    'src/toolbar/btn_bold.js',
+                    'src/plugin/btn_bold.js',
                     'src/lib/rgb_to_hex.js',
-                    'src/toolbar/btn_color.js',
-                    'src/toolbar/btn_size.js',
-                    'src/toolbar/btn_link.js',
-                    'src/toolbar/btn_split.js'
+                    'src/plugin/btn_color.js',
+                    'src/plugin/btn_size.js',
+                    'src/plugin/btn_link.js'
                 ],
                 dest: 'dist/ubb_editor.js'
             }
