@@ -66,6 +66,19 @@
         'color' : color,
         'default_color' : '#000000'
     }
+    var rgb_to_hex = function(rgb){
+        if(!/rgb\([ 0-9,]+\)/.test(rgb)){
+            return rgb;
+        }
+        var rgb_arr = rgb.match(/\d{1,3}/g),
+            Hex = '',
+            int16;
+        for(var i=0; i<3; i++){
+            int16 = Number(rgb_arr[i]).toString(16);
+            Hex += (int16.length === 1?'0':'')+int16;
+        }
+        return '#' + Hex;
+    }
     $.ubb_editor.plugin('btn_color', config, function(editor){
         var plugin_config = editor.get_plugin_config('btn_color');
         var color_map = {};
@@ -93,7 +106,7 @@
                 onselected : function (editor) {
                     var cur_color = null;
                     var style_color = $(editor.selection_text_container).css('color');
-                    style_color = $.rgb_to_hex(style_color);
+                    style_color = rgb_to_hex(style_color);
                     if(style_color && color_map[style_color]){
                         cur_color = style_color;
                     }else{
@@ -118,7 +131,7 @@
                             $font = fonts.eq(i);
                             style_color = $font.css('color');
                             if(reg_rgb.test(style_color)){
-                                style_color = $.rgb_to_hex(style_color);
+                                style_color = rgb_to_hex(style_color);
                             }
                             //默认颜色不加颜色属性
                             if(style_color === plugin_config.default_color){

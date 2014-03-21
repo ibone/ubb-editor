@@ -1,28 +1,29 @@
-//当工具栏被滚动到看不见的时候...
-    if(false&&!self.toolbarBindScrollEvent){
+$.ubb_editor.plugin('edit',function(editor){
+    //当工具栏被滚动到看不见的时候...
+    if(false&&!editor.toolbarBindScrollEvent){
         $(window).bind("scroll", function () {
-            self.toolbarBindScrollEvent = true;
+            editor.toolbarBindScrollEvent = true;
             var docScrollTop = $(document).scrollTop();
-            if (!self.toolbarOffsetTop) {
-                self.toolbarOffsetTop = $('#' + self.config.toolbarId).offset().top;
+            if (!editor.toolbarOffsetTop) {
+                editor.toolbarOffsetTop = editor.$toolbar.offset().top;
             }
-            if (self.toolbarOffsetTop <= docScrollTop) {
+            if (editor.toolbarOffsetTop <= docScrollTop) {
                 if ($.browser.msie && $.browser.version==="6.0") {
                     //to do
                 } else {
-                    if (!self.toolbarPositionFixed) {
-                        self.toolbarPositionFixed = true;
-                        $('#' + self.config.toolbarId).css({
+                    if (!editor.toolbarPositionFixed) {
+                        editor.toolbarPositionFixed = true;
+                        editor.$toolbar.css({
                             position : "fixed",
                             top : "38px",
-                            width : $('#' + self.config.toolbarId).width() + "px"
+                            width : editor.$toolbar.width() + "px"
                         });
                     }
                 }
             } else {
-                if (self.toolbarPositionFixed) {
-                    self.toolbarPositionFixed = false;
-                    $('#' + self.config.toolbarId).css({
+                if (editor.toolbarPositionFixed) {
+                    editor.toolbarPositionFixed = false;
+                    editor.$toolbar.css({
                         position : "relative",
                         top : "0"
                     });
@@ -30,3 +31,4 @@
             }
         });
     }
+}
