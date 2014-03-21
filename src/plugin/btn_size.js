@@ -18,18 +18,19 @@
             px  : '18px'
         }
     ];
-    $.ubb_editor.config('size',size);
-    $.ubb_editor.plugin('size',function(editor,name){
-        var size = editor.get_config('size');
+    var config = {
+        'size':size
+    }
+    $.ubb_editor.plugin('btn_size',config,function(editor){
+        var size = editor.get_plugin_config('btn_size').size;
         var size_map = {};
         for (var i = 0; i < size.length; i++) {
             size_map[size[i].val+''] = size[i].px;
         }
         editor.add_button(
             {
-                name : name,
+                name : 'size',
                 show_panel : function (editor) {
-                    var size = editor.get_config('size');
                     if (editor.find('.ubb_size_panel').length === 0) {
                         var html = '<div class="ubb_size_panel">';
                         for (var i = 0; i < size.length; i++) {
@@ -42,12 +43,11 @@
                     }
                 },
                 onselected : function (editor) {
-                    var size = editor.get_config('size');
-                    var cur_size = $(editor.selection_text_container).css('font-size');
+                    var style_size = $(editor.selection_text_container).css('font-size');
                     var default_alt = '小号字体';
-                    if (cur_size) {
+                    if (style_size) {
                         $(size).each(function(){
-                            if(this.px === cur_size){
+                            if(this.px === style_size){
                                 default_alt = this.alt;
                                 return false;
                             }
@@ -60,9 +60,8 @@
                         '</div>',
                 exec : function (editor, target_button) {
                     var self = this;
-                    var size = editor.get_config('size');
                     var change_font = function() {
-                        var fonts = $(editor.iframe_document).find("font,span"),
+                        var fonts = $(editor.document).find("font,span"),
                             $font,px,size;
                         for (var i = 0, len = fonts.length; i < len; i++) {
                             $font = fonts.eq(i);
@@ -80,13 +79,15 @@
                 },
                 encode_ubb : function(attr_value){
                     if(attr_value){
-                        return '[font' + attr_value + ']';
+                        return {
+                            node_name : 'font',
+                            node_attr : attr_value.replace('#','')
+                        };
                     }else{
-                        return '';
+                        return {};
                     }
                 },
                 decode_ubb : function(editor){
-                    var size = editor.get_config('size');
                     var ubb_map = {};
                     for (var i = 0; i < size.length; i++) {
                         ubb_map['[font' + size[i].val + ']'] = '<font '+ this.allow_attr +'="'+ size[i].val +'" style="font-size:' + size[i].px + '">';

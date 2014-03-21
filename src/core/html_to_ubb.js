@@ -1,5 +1,5 @@
     //可控制便可转换，所有能操作的样式才能变成ubb格式，其他一律清除
-    function html_to_ubb(editor) {
+    function html_to_ubb(editor,html) {
         //var reg_spanColse = /<span(?!.*?<span).*?<\/span>/gi;
         //.*?后面的?号是避免正则贪婪
         //为什么要匹配配对标签，比如<font size="3">test</font>，这种可以针对单个开始标签或者结束标签进行转换
@@ -13,8 +13,7 @@
         //var reg_pair_tag = /<[a-z]{1,6}[^<]+?<\/[a-z]{1,6}>/gi;
         //目前是使用John Resig写的一个html parse来处理配对
         
-        var html = editor.iframe_document.body.innerHTML,
-            allow_tag_name = {},
+        var allow_tag_name = {},
             default_ubb_map = {
                 'p'   : 'p',
                 'div' : 'p',
@@ -49,25 +48,29 @@
                         }
                     }
                 }
-                if(!ubb_tag && default_ubb_map[node_name]){
-                    ubb_tag = '[' + default_ubb_map[node_name] + ']';
+                if(!ubb_tag){
+                    ubb_tag = {
+                        node_name : default_ubb_map[node_name],
+                        node_attr : ''
+                    };
                 }
-                if(ubb_tag){
+                //判断当前标签是否被编译,如果没有,则关联结尾的标签将清除
+                if(ubb_tag.node_name){
                     cur_parent_node_be_used = true;
-                    ubb_text += ubb_tag;
+                    ubb_text += '[' + ubb_tag.node_name + ubb_tag.node_attr + ']';
                 }else{
                     cur_parent_node_be_used = false;
                 }
                 if ( !unary ) {
                     elements.push({
-                        node_name : node_name,
-                        be_used : cur_parent_node_be_used
+                        node_name : ubb_tag.node_name,
+                        be_used   : cur_parent_node_be_used
                     });
                 }
             },
             end: function( node_name ) {
                 if(cur_parent_node_be_used){
-                    ubb_text += '[/' + (default_ubb_map[node_name]||node_name) + ']';
+                    ubb_text += '[/' + elements[ elements.length - 1 ].node_name + ']';
                 }
                 if(elements.length >= 2){
                     elements.length -= 1;

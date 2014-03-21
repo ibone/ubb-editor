@@ -3,8 +3,7 @@
         var default_decode = {
                 '[p]' : '<p>',
                 '[/p]' : '</p>',
-                '[end]' : '>',
-                '[s]' : '&nbsp;'
+                '[br]' : '<br/>'
             };
         var toolbar = editor.get_config('toolbar');
         var buttons = editor.buttons;

@@ -1,7 +1,7 @@
-$.ubb_editor.plugin('bold',function(editor,name){
+$.ubb_editor.plugin('btn_bold',function(editor){
     editor.add_button(
         {
-            name : name,
+            name : 'bold',
             exec : function (editor) {
                 var $button = editor.find('font-bold a');
                 if ($button.hasClass('on')) {

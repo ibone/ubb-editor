@@ -62,20 +62,22 @@
             alt : '黄色'
         }
     ];
-    $.ubb_editor.config('color',color);
-    $.ubb_editor.config('default_color','#000000');
-    $.ubb_editor.plugin('color',function(editor,name){
+    var config = {
+        'color' : color,
+        'default_color' : '#000000'
+    }
+    $.ubb_editor.plugin('btn_color', config, function(editor){
+        var plugin_config = editor.get_plugin_config('btn_color');
         var color_map = {};
-        var color = editor.get_config('color');
+        var color = plugin_config.color;
         var length = color.length;
         for (var i = 0; i < length; i++) {
             color_map[color[i].val] = true;
         }
         editor.add_button(
             {
-                name : name,
+                name : 'color',
                 show_panel : function (editor) {
-                    var color = editor.get_config('color');
                     var length = color.length;
                     if (editor.find('.ubb_color_panel').length === 0) {
                         var html = '<div class="ubb_color_panel">';
@@ -90,12 +92,12 @@
                 },
                 onselected : function (editor) {
                     var cur_color = null;
-                    var color = $(editor.selection_text_container).css('color');
-                    color = $.rgb_to_hex(color);
-                    if(color && color_map[color]){
-                        cur_color = color;
+                    var style_color = $(editor.selection_text_container).css('color');
+                    style_color = $.rgb_to_hex(style_color);
+                    if(style_color && color_map[style_color]){
+                        cur_color = style_color;
                     }else{
-                        cur_color = '#000000';
+                        cur_color = plugin_config.default_color;
                     }
                     editor.find('.font-color i').css('background-color',cur_color);
                 },
@@ -110,15 +112,16 @@
                     var reg_hex = /#[a-f0-9]{3,6}/i;
                     
                     var change_font = function() {
-                        var fonts = $(editor.iframe_document).find("font,span");
-                        var $font,color,attr_color;
+                        var fonts = $(editor.document).find("font,span");
+                        var $font,style_color,attr_color;
                         for (var i = 0, len = fonts.length; i < len; i++) {
                             $font = fonts.eq(i);
-                            color = $font.css('color');
-                            if(reg_rgb.test(color)){
-                                color = $.rgb_to_hex(color);
+                            style_color = $font.css('color');
+                            if(reg_rgb.test(style_color)){
+                                style_color = $.rgb_to_hex(style_color);
                             }
-                            if(color === '#000000'){
+                            //默认颜色不加颜色属性
+                            if(style_color === plugin_config.default_color){
                                 continue;
                             }
                             attr_color = $font.attr('style');
@@ -131,27 +134,29 @@
                                     continue;
                                 }
                             }
-                            if(!color_map[color]){
+                            if(!color_map[style_color]){
                                 continue;
                             }
-                            $font.attr(self.allow_attr,color);
+                            $font.attr(self.allow_attr,style_color);
                         }
                     };
-                    var color = $(target_button).data('color');
-                    editor.exec_command("forecolor", color);
+                    var command_color = $(target_button).data('color');
+                    editor.exec_command("forecolor", command_color);
                     change_font();
-                    editor.find('.font-color i').css('background-color',color);
+                    editor.find('.font-color i').css('background-color',command_color);
                 },
                 encode_ubb : function(attr_value){
                     if(attr_value){
-                        return '[font' + attr_value.replace('#','') + ']';
+                        return {
+                            node_name : 'font',
+                            node_attr : attr_value.replace('#','')
+                        };
                     }else{
-                        return '';
+                        return {};
                     }
                 },
                 decode_ubb : function(editor){
                     var ubb_map = {};
-                    var color = editor.get_config('color');
                     for (var i = 0; i < color.length; i++) {
                         ubb_map['[font' + color[i].val.replace('#','') + ']'] = '<font ' + this.allow_attr + '="'+ color[i].val +'" style="color:' + color[i].val + '">';
                     }

@@ -1,7 +1,7 @@
-$.ubb_editor.plugin('link',function(editor,name){
+$.ubb_editor.plugin('btn_link',function(editor){
     editor.add_button(
         {
-            name : name,
+            name : 'link',
             show_panel : function(editor){
                 if (editor.find('.ubb_link_panel').length === 0) {
                     var link_panel_html = 
@@ -40,23 +40,26 @@ $.ubb_editor.plugin('link',function(editor,name){
             },
             encode_ubb : function(attr_value){
                 if(attr_value){
-                    return '[aend]href="' + attr_value + '"[end]';
+                    return {
+                        node_name : 'a',
+                        node_attr : 'end]href="' + attr_value + '"[end'
+                    };
                 }else{
-                    return '';
+                    return {};
                 }
             },
             decode_ubb : function(editor){
                 return {
                     '[aend]'  : '<a ',
-                    '[a end]' : '<a ',
-                    '[/a]'    : '</a>'
+                    '[/a]'    : '</a>',
+                    '[end]'    : '>'
                 };
             },
             allow_tag_name : {
                 'a'  : true
             },
             //有一些属性也可以不使用ubb前缀，比如href，它的属性输出形式就一种 href="xxx.com"
-            //凡是不能通过配置来控制其属性值的属性，其标签都必须包含'end]',属性名和值直接输出在ubb标签中，比如a标签
+            //凡是不能通过配置来控制其属性值的属性，其属性名和值都必须被'end]'和'[end'包裹,直接输出在ubb标签中，比如a标签
             //大的规则从来都是被小的规则逼出来的
             allow_attr : 'href'
         }

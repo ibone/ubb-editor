@@ -1,7 +1,7 @@
     
     //获取现有range
     function get_range(editor) {
-        if (is_ie678) {
+        if (editor.msie) {
             return get_selection(editor).createRange();
         } else {
             return get_selection(editor).getRangeAt(0);
@@ -10,16 +10,16 @@
     
     //新建range
     function create_range(editor) {
-        if (is_ie678) {
-            return editor.iframe_document.body.createTextRange();
+        if (editor.msie) {
+            return editor.document.body.createTextRange();
         } else {
-            return editor.iframe_document.createRange();
+            return editor.document.createRange();
         }
     }
     
     function get_selection(editor) {
         var content_window = editor.iframe.contentWindow;
-        if (is_ie678) {
+        if (editor.msie) {
             return content_window.document.selection;
         } else {
             return content_window.getSelection();
@@ -41,11 +41,8 @@
     
     //改变range的范围
     function set_range(editor, start, end, element) {
-        if(!element){
-            element = editor.iframe_document.body;
-        }
         var range = create_range(editor);
-        if (!is_ie678) {
+        if (!editor.msie) {
             range.selectNodeContents(element);
             var text_nodes = get_text_nodes_in(element);
             var foundStart = false;
@@ -81,7 +78,7 @@
     function paste_html(editor, html, range) {
         editor.focus();
         var selection = null;
-        if (is_ie678) {
+        if (editor.msie) {
             if(!range){
                 range = get_range(editor);
             }

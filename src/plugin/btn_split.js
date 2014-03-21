@@ -1,7 +1,7 @@
-$.ubb_editor.plugin('split',function(editor,name){
+$.ubb_editor.plugin('btn_split',function(editor){
     editor.add_button(
         {
-            name : name,
+            name : 'split',
             html : '<span class="split"></span>'
         }
     );
