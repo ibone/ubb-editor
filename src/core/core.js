@@ -35,7 +35,7 @@
                     depend = [];
                 }
             }
-            if(type_of(config.require) === 'undefined'){
+            if(!config.require){
                 config.require = true;
             }
             this.plugins.push({
@@ -66,10 +66,10 @@
             var id = (new Date().getTime()) + '' + (ubb_editor_num++);
             var editor = {
                 id : 'ubb_editor' + id,
+                $textarea : $(this),
                 config : $.extend({}, default_config, config),
                 buttons : {}
             }
-            editor.$textarea = $(this);
             api(editor);
             init(editor);
             fn(editor);
@@ -128,16 +128,12 @@
                     ){
                         plugin.fn( editor );
                     }else{
-                        //不执行的插件要进入装入失效插件列表中
                         loaded_disabled_plugins.push(plugin.name);
                     }
                 }
             }
         }
-        editor.document.body.innerHTML = ubb_to_html(editor,editor.$textarea.text());
-        editor.fire('content_change');
         editor.fire('plugins_loaded');
-        editor.focus();
     }
     
     function get_document(iframe){

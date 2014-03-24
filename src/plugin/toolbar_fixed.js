@@ -1,4 +1,4 @@
-$.ubb_editor.plugin('edit',function(editor){
+$.ubb_editor.plugin('toolbar_fixed',function(editor){
     //当工具栏被滚动到看不见的时候...
     if(false&&!editor.toolbarBindScrollEvent){
         $(window).bind("scroll", function () {
@@ -31,4 +31,4 @@ $.ubb_editor.plugin('edit',function(editor){
             }
         });
     }
-}
+});

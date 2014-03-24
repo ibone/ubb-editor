@@ -21,7 +21,9 @@ function api(editor){
     editor.get_selection = function(){
         return get_selection(this);
     };
-    
+    editor.restore_range = function(range){
+        restore_range(this,range);
+    };
     editor.paste_html = function(html, range){
         paste_html(this, html, range);
     };
@@ -35,7 +37,7 @@ function api(editor){
 
     editor.ubb_to_html = function(ubb){
         if(!ubb){
-            return ;
+            return '';
         }
         return ubb_to_html(this,ubb);
     };
@@ -120,4 +122,29 @@ function api(editor){
     editor.get_document = function(iframe){
         return get_document(iframe);
     };
+    
+    editor.html_to_text = function(html){
+        var text = html.replace(/<[^><]+>/g, '');
+            text = text.replace(/ {2}/g, ' &nbsp;');
+            text = text.replace(/\n/g, '');
+        return text;
+    };
+    
+    editor.get_selected_container = function(event){
+        var selection_container = null;
+        var range = editor.get_range();
+        if (editor.msie) {
+            selection_container = range.parentElement();
+        } else {
+            if (range.commonAncestorContainer.nodeType === 3) {
+                selection_container = range.commonAncestorContainer.parentNode;
+            } else {
+                selection_container = range.commonAncestorContainer;
+            }
+        }
+        if (event && !selection_container) {
+            selection_container = event.srcElement ? event.srcElement : event.target;
+        }
+        return selection_container;
+    }
 }

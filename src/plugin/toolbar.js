@@ -6,8 +6,14 @@ $.ubb_editor.plugin('toolbar',function(editor){
     editor.$toolbar.on("click", 'a', function () {
         var $button = $(this),
             button_type = $button.data('onclick'),
-            button_name = $button.data('name');
-        editor.buttons[button_name][button_type](editor,this);
+            button_name = $button.data('name'),
+            button = editor.buttons[button_name];
+            
+        button[button_type](editor,this);
+        
+        if(button_type = 'exec' && button.onselected){
+            button.onselected(editor, editor.get_selected_container());
+        }
     });
     editor.$toolbar.on("click", function (event) {
         if(this === (event.srcElement||event.target)){
@@ -26,6 +32,7 @@ $.ubb_editor.plugin('toolbar',function(editor){
                 editor.onselected.push(button.onselected);
             }
         });
+        editor.fire('toolbar_loaded');
     })
     
     function stop_bubble(event){

@@ -3,16 +3,10 @@ $.ubb_editor.plugin('btn_bold',function(editor){
         {
             name : 'bold',
             exec : function (editor) {
-                var $button = editor.find('font-bold a');
-                if ($button.hasClass('on')) {
-                    $button.removeClass('on');
-                } else {
-                    $button.addClass('on');
-                }
                 editor.exec_command('bold', '');
             },
-            onselected : function (editor) {
-                var val = $(editor.selection_text_container).css('font-weight');
+            onselected : function (editor,selection_container) {
+                var val = $(selection_container).css('font-weight');
                 var $button = editor.find('.font-bold a');
                 if (val === 'bold' || val+'' === '700') {
                     $button.addClass('on');

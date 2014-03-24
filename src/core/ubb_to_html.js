@@ -8,11 +8,14 @@
         var toolbar = editor.get_config('toolbar');
         var buttons = editor.buttons;
         var buttons_length = toolbar.length;
+        var button,ubb_map;
         if(!editor.ubb_map){
             editor.ubb_map = {};
             $.extend(editor.ubb_map,default_decode);
             for(var i = 0; i < buttons_length; i++){
-                $.extend(editor.ubb_map,buttons[toolbar[i]].decode_ubb(editor));
+                button = buttons[toolbar[i]];
+                ubb_map = button.decode_ubb(editor);
+                $.extend(editor.ubb_map,ubb_map);
             }
         }
         var length = 0;

@@ -72,7 +72,17 @@
             range.select();
         }
     }
-    
+    function restore_range(editor,range) {
+        if (range) {
+            if (editor.msie) {
+                range.select();
+            } else {
+                selection = get_selection(editor);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            }
+        }
+    }
     //append 向编辑器插入html代码
     //@param html (String||Node @@如果是ie678则传字符串，如果是标准浏览器，则传node)
     function paste_html(editor, html, range) {

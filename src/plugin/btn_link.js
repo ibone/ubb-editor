@@ -1,8 +1,12 @@
 $.ubb_editor.plugin('btn_link',function(editor){
+    var old_range = null;
     editor.add_button(
         {
             name : 'link',
             show_panel : function(editor){
+                if(editor.msie){
+                    old_range = editor.get_range();
+                }
                 if (editor.find('.ubb_link_panel').length === 0) {
                     var link_panel_html = 
                         '<div class="ubb_link_panel">'+
@@ -23,6 +27,10 @@ $.ubb_editor.plugin('btn_link',function(editor){
                         '<a href="javascript:;" data-onclick="show_panel" data-name="link" title="链接" unselectable="on">链接</a>'+
                     '</div>',
             exec : function (editor) {
+                if(editor.msie){
+                    editor.focus();
+                    editor.restore_range(old_range);
+                }
                 var input = editor.find('.ubb_link_panel input');
                 var url = input.val();
                 var reg = /^(http|https):\/\//;
@@ -48,7 +56,7 @@ $.ubb_editor.plugin('btn_link',function(editor){
                     return {};
                 }
             },
-            decode_ubb : function(editor){
+            decode_ubb : function(){
                 return {
                     '[aend]'  : '<a ',
                     '[/a]'    : '</a>',

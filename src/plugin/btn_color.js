@@ -103,16 +103,16 @@
                         editor.toggle_panel('.ubb_color_panel');
                     }
                 },
-                onselected : function (editor) {
+                onselected : function (editor,selection_container) {
                     var cur_color = null;
-                    var style_color = $(editor.selection_text_container).css('color');
+                    var style_color = $(selection_container).css('color');
                     style_color = rgb_to_hex(style_color);
                     if(style_color && color_map[style_color]){
                         cur_color = style_color;
                     }else{
                         cur_color = plugin_config.default_color;
                     }
-                    editor.find('.font-color i').css('background-color',cur_color);
+                    editor.find('.font-color i').css('background-color',cur_color).data('color',cur_color);
                 },
                 html :  '<div class="font-btns font-color">'+
                             '<a href="javascript:;" data-onclick="show_panel" data-name="color" title="前景色" unselectable="on">'+
@@ -139,9 +139,6 @@
                             }
                             attr_color = $font.attr('style');
                             if(!reg_rgb.test(attr_color) && !reg_hex.test(attr_color)){
-                                continue;
-                            }
-                            if(!attr_color){
                                 attr_color = $font.attr('color');
                                 if(!reg_rgb.test(attr_color) && !reg_hex.test(attr_color)){
                                     continue;
@@ -156,7 +153,6 @@
                     var command_color = $(target_button).data('color');
                     editor.exec_command("forecolor", command_color);
                     change_font();
-                    editor.find('.font-color i').css('background-color',command_color);
                 },
                 encode_ubb : function(attr_value){
                     if(attr_value){
@@ -168,7 +164,7 @@
                         return {};
                     }
                 },
-                decode_ubb : function(editor){
+                decode_ubb : function(){
                     var ubb_map = {};
                     for (var i = 0; i < color.length; i++) {
                         ubb_map['[font' + color[i].val.replace('#','') + ']'] = '<font ' + this.allow_attr + '="'+ color[i].val +'" style="color:' + color[i].val + '">';

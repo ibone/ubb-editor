@@ -144,11 +144,11 @@ describe("文本选中反馈", function() {
             editor.move_cursor(2);
             $(editor.document).trigger('mouseup');
             jasmine.log(editor.document.body.innerHTML);
-            expect($.rgb_to_hex(editor.find('.font-color i').css('background-color'))).toBe('#77cc33');
+            expect(editor.find('.font-color i').data('color')).toBe('#77cc33');
             //选中颜色如果不是配置的颜色，则反馈默认色
             editor.move_cursor(6);
             $(editor.document).trigger('mouseup');
-            expect($.rgb_to_hex(editor.find('.font-color i').css('background-color'))).toBe('#000000');
+            expect(editor.find('.font-color i').data('color')).toBe('#000000');
         });
     });
     it("选中字号反馈", function() {
@@ -238,7 +238,7 @@ describe("按钮生成", function() {
         });
     });
 });
-describe("按钮点击功能正常", function() {
+describe("按钮点击模拟", function() {
     beforeEach(function(){
         $('body').append('<textarea></textarea>');
     });
@@ -247,15 +247,49 @@ describe("按钮点击功能正常", function() {
         $('.ubb_editor_wrap').remove();
     });
     it("加粗按钮正常", function() {
-
+        $('textarea').ubb_editor(function(editor){
+            editor.document.body.innerHTML = 'test';
+            editor.focus();
+            editor.set_range(1,2);
+            editor.find('.font-bold a').click();
+            expect(/strong|b/i.test(editor.document.body.innerHTML)).toBe(true);
+            expect(editor.find('.font-bold a').hasClass('on')).toBe(true);
+            editor.find('.font-bold a').click();
+            expect(editor.document.body.innerHTML).toBe('test');
+            expect(editor.find('.font-bold a').hasClass('on')).toBe(false);
+        });
     });
     it("颜色按钮正常", function() {
-
+        $('textarea').ubb_editor(function(editor){
+            editor.document.body.innerHTML = 'test';
+            editor.focus();
+            editor.set_range(1,2);
+            editor.find('.font-color a').click();
+            editor.find('.ubb_color_panel a').eq(4).click();//#bb0000
+            expect(/ubb\-color=\"#bb0000\"/i.test(editor.document.body.innerHTML)).toBe(true);
+        });
     });
     it("字号按钮正常", function() {
-
+        $('textarea').ubb_editor(function(editor){
+            editor.document.body.innerHTML = 'test';
+            editor.focus();
+            editor.set_range(1,2);
+            editor.find('.font-size a').click();
+            editor.find('.ubb_size_panel a').eq(3).click();//18px
+            expect(/ubb\-size=\"4\"/i.test(editor.document.body.innerHTML)).toBe(true);
+        });
     });
     it("链接按钮正常", function() {
+        $('textarea').ubb_editor(function(editor){
+            editor.document.body.innerHTML = 'test';
+            editor.focus();
+            editor.set_range(1,2);
+            editor.get_range();
+            editor.find('.font-link a').click();
+            editor.find('.ubb_link_panel input').focus().val('http://google.com/');
+            editor.find('.ubb_link_panel .confirm_btn').click();
+            expect(/http:\/\/google.com\//i.test(editor.document.body.innerHTML)).toBe(true);
+        });
         //在ie7下会失去焦点，然后功能不正常
     });
 });
@@ -264,9 +298,21 @@ describe("文本解码", function() {
 
     });
 });
-describe("粘贴文本格式清除", function() {
-    it("todo", function() {
-
+describe("HTML格式清除", function() {
+    beforeEach(function(){
+        $('body').append('<textarea></textarea>');
+    });
+    afterEach(function(){
+        $('textarea').remove();
+        $('.ubb_editor_wrap').remove();
+    });
+    it("HTML格式清除", function() {
+        $('textarea').ubb_editor(function(editor){
+            var html = '<p>test</p><img src="xxxx">   ';
+            expect(editor.html_to_text(html)).toBe('test &nbsp; ');
+            var html = '<p>t<est</p><img src="xxxx">';
+            expect(editor.html_to_text(html)).toBe('t<est');
+        });
     });
 });
 

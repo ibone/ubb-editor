@@ -26,43 +26,29 @@ $.ubb_editor.plugin('edit',function(editor){
         onselected(editor,event);
         editor.fire('content_change');
     });
+    
     editor.on('content_change',function(){
         editor.$textarea.text(editor.html_to_ubb())
                         //保存用户输入的纯文字，不包含标签，做内容长度校验使用
                         .data('text',$(editor.document.body).text());
     });
     
+    editor.on('toolbar_loaded',function(){
+        editor.document.body.innerHTML = editor.ubb_to_html(editor.$textarea.text());
+        editor.fire('content_change');
+        editor.focus();
+    });
+    
     function onselected(editor, event){
-        //判断是否选中文本
-        var range = editor.get_range();
-        if (editor.msie) {
-            editor.selection_text_container = range.parentElement();
-        } else {
-            if (range.commonAncestorContainer.nodeType === 3) {
-                editor.selection_text_container = range.commonAncestorContainer.parentNode;
-            } else {
-                editor.selection_text_container = range.commonAncestorContainer;
+        var selected_container = editor.get_selected_container(event);
+        if(selected_container){
+            for (var i in editor.onselected) {
+                editor.onselected[i](editor, selected_container);
             }
-        }
-        //未选中文本
-        if (!editor.selection_text_container) {
-            editor.selection_text_container = event.srcElement ? event.srcElement : event.target;
-        }
-        if (!editor.selection_text_container) {
-            return;
-        }
-        for (var i in editor.onselected) {
-            editor.onselected[i](editor);
         }
     }
     
     function paste(editor, event, callback){
-        var filter_paste_text = function(text){
-            text = text.replace(/<[^>]+>/g, '');
-            text = text.replace(/ {2}/g, ' &nbsp;');
-            text = text.replace(/\n/g, '');
-            return text; 
-        };
         var paste_text, 
             new_text, 
             tmp_container, 
@@ -78,7 +64,7 @@ $.ubb_editor.plugin('edit',function(editor){
             editor.focus();
             paste_text = tmp_container.contentWindow.document.body.innerHTML;
             $(tmp_container).remove();
-            new_text = filter_paste_text(paste_text);
+            new_text = editor.html_to_text(paste_text);
             editor.paste_html(new_text, old_range);
             prevent_default(event);
             callback();
@@ -105,7 +91,7 @@ $.ubb_editor.plugin('edit',function(editor){
                     return;
                 } 
                 $(tmp_container).remove();
-                new_text = filter_paste_text(paste_text); 
+                new_text = editor.html_to_text(paste_text); 
                 editor.paste_html(new_text, old_range);
                 callback();
             },1);

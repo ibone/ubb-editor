@@ -42,8 +42,8 @@
                         editor.toggle_panel('.ubb_size_panel');
                     }
                 },
-                onselected : function (editor) {
-                    var style_size = $(editor.selection_text_container).css('font-size');
+                onselected : function (editor,selection_container) {
+                    var style_size = $(selection_container).css('font-size');
                     var default_alt = '小号字体';
                     if (style_size) {
                         $(size).each(function(){
@@ -74,7 +74,6 @@
                     };
                     var $button = $(target_button);
                     editor.exec_command('fontsize', $button.data("size"));
-                    editor.find('.font-size a').text($button.attr("title"));
                     change_font();
                 },
                 encode_ubb : function(attr_value){
