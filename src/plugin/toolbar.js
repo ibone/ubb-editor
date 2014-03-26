@@ -24,8 +24,18 @@ $.ubb_editor.plugin('toolbar',function(editor){
     editor.onselected = [];
     
     editor.on('plugins_loaded',function(){
-        $.each(editor.get_config('toolbar'), function (i, name) {
+        var toolbar = editor.get_config('toolbar');
+        //如果工具栏未配置，则按照按钮插件加载顺序来显示和排序
+        if(toolbar&&toolbar.length === 0){
+            for(var i = 0; i < editor.buttons.length; i++){
+                toolbar.push(editor.buttons[i].name);
+            }
+        }
+        $.each(toolbar, function (i, name) {
             var button = editor.buttons[name];
+            if(!button){
+                return true;
+            }
             editor.$toolbar.append(button.html);
             //判断button是否有配置选中反馈函数
             if(button.onselected){

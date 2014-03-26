@@ -21,9 +21,11 @@ function api(editor){
     editor.get_selection = function(){
         return get_selection(this);
     };
+    
     editor.restore_range = function(range){
         restore_range(this,range);
     };
+    
     editor.paste_html = function(html, range){
         paste_html(this, html, range);
     };
@@ -55,6 +57,7 @@ function api(editor){
     
     editor.add_button = function(button){
         this.buttons[button.name] = button;
+        this.buttons[this.buttons.length] = button;
     };
     
     editor.exec_command = function(command, value) {

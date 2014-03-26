@@ -18,7 +18,7 @@ describe("编辑器初始化条件", function() {
         });
     });
 });
-describe("标签a编码", function() {
+describe("标签编码", function() {
     beforeEach(function(){
         $('body').append('<textarea></textarea>');
     });
@@ -35,48 +35,25 @@ describe("标签a编码", function() {
     });
     it("不包含href属性", function() {
         $('textarea').ubb_editor(function(editor){
-            editor.document.body.innerHTML = '<a><img src="google.com"></a>';
+            editor.document.body.innerHTML = '<a>123</a>';
             jasmine.log('log:' + editor.html_to_ubb());
-            expect(editor.html_to_ubb()).toBe('');
+            expect(editor.html_to_ubb()).toBe('123');
         });
     });
-});
-describe("标签font编码", function() {
-    beforeEach(function(){
-        $('body').append('<textarea></textarea>');
-    });
-    afterEach(function(){
-        $('textarea').remove();
-        $('.ubb_editor_wrap').remove();
-    });
-    //根据特有属性来赋值ubb
-    it("标签font编码的color", function() {
+    //font
+    it("标签font编码:color", function() {
         $('textarea').ubb_editor(function(editor){
             editor.document.body.innerHTML = '<font ubb-color="000000">test</font>';
             expect(editor.html_to_ubb()).toBe('[font000000]test[/font]');
         });
     });
-    it("标签font编码的color", function() {
-        $('textarea').ubb_editor(function(editor){
-            editor.document.body.innerHTML = '<span ubb-color="000000">test</span>';
-            expect(editor.html_to_ubb()).toBe('[font000000]test[/font]');
-        });
-    });
-    it("标签font编码的size", function() {
+    it("标签font编码:size", function() {
         $('textarea').ubb_editor(function(editor){
             editor.document.body.innerHTML = '<font ubb-size="3">test</font>';
             expect(editor.html_to_ubb()).toBe('[font3]test[/font]');
         });
     });
-});
-describe("其他标签编码", function() {
-    beforeEach(function(){
-        $('body').append('<textarea></textarea>');
-    });
-    afterEach(function(){
-        $('textarea').remove();
-        $('.ubb_editor_wrap').remove();
-    });
+    //默认
     it("p标签 ==> [p]", function() {
         $('textarea').ubb_editor(function(editor){
             editor.document.body.innerHTML = '<p>test</p>';
@@ -91,24 +68,16 @@ describe("其他标签编码", function() {
     });
     it("strong标签 ==> [b]", function() {
         $('textarea').ubb_editor(function(editor){
-            editor.document.body.innerHTML = '<strong>test</strong>';
+            editor.document.body.innerHTML = '<strong ubb-weight="bold">test</strong>';
             expect(editor.html_to_ubb()).toBe('[b]test[/b]');
         });
     });
     it("b标签 ==> [b]", function() {
         $('textarea').ubb_editor(function(editor){
-            editor.document.body.innerHTML = '<B>test</B>';
+            editor.document.body.innerHTML = '<B ubb-weight="bold">test</B>';
             expect(editor.html_to_ubb()).toBe('[b]test[/b]');
         });
     });
-    // it("空格 ==> [s]", function() {
-        // $('textarea').ubb_editor(function(editor){
-            // editor.document.body.innerHTML = '&nbsp;1';
-            // expect(editor.html_to_ubb()).toBe('[s]1');
-            // editor.document.body.innerHTML = '&nbsp;&nbsp;;2';
-            // expect(editor.html_to_ubb()).toBe('[s][s];2');
-        // });
-    // });
     //ie中会把连续的空格转换成1个空格
     //ie中不带分号的&nbsp会吞掉后续的字符
     it("<br> ==> [br]", function() {
@@ -119,12 +88,10 @@ describe("其他标签编码", function() {
             expect(editor.html_to_ubb()).toBe('[br]');
         });
     });
+    //特殊情况
     it("非配对标签不能被匹配", function() {
         $('textarea').ubb_editor(function(editor){
             editor.document.body.innerHTML = '<img src="google.com"></a>';
-            jasmine.log('log:' + editor.html_to_ubb());
-            expect(editor.html_to_ubb()).toBe('');
-            editor.document.body.innerHTML = '<a><img src="google.com"></a>';
             jasmine.log('log:' + editor.html_to_ubb());
             expect(editor.html_to_ubb()).toBe('');
         });
@@ -143,7 +110,6 @@ describe("文本选中反馈", function() {
             editor.document.body.innerHTML = '<font style="color:#77cc33">test</font><font style="color:#77CC32">test</font>';
             editor.move_cursor(2);
             $(editor.document).trigger('mouseup');
-            jasmine.log(editor.document.body.innerHTML);
             expect(editor.find('.font-color i').data('color')).toBe('#77cc33');
             //选中颜色如果不是配置的颜色，则反馈默认色
             editor.move_cursor(6);
@@ -185,7 +151,7 @@ describe("文本选中反馈", function() {
         });
     });
 });
-describe("特有属性生成", function() {
+describe("ubb属性", function() {
     beforeEach(function(){
         $('body').append('<textarea></textarea>');
     });
@@ -212,7 +178,7 @@ describe("特有属性生成", function() {
         });
     });
 });
-describe("按钮生成", function() {
+describe("按钮加载", function() {
     beforeEach(function(){
         $('body').append('<textarea></textarea>');
     });
@@ -220,21 +186,25 @@ describe("按钮生成", function() {
         $('textarea').remove();
         $('.ubb_editor_wrap').remove();
     });
-    it("生成两个按钮", function() {
+    it("按钮排序", function() {
         $('textarea').ubb_editor({
-            toolbar : ['bold', 'color']
+            //toolbar 控制按钮的排序和显示
+            toolbar : ['color', 'bold']
         },function(editor){
-            editor.document.body.innerHTML = '<p>test</p>';
             expect(editor.find('.font-btns').length).toBe(2);
+            expect(editor.find('.font-color').next().hasClass('font-bold')).toBe(true);
         });
     });
-    it("只有btn_bold按钮", function() {
+    it("按钮配置", function() {
         $('textarea').ubb_editor({
-            toolbar : ['bold']
+            plugin : {
+                btn_color : {
+                    require : false
+                }
+            }
         },function(editor){
             editor.document.body.innerHTML = '<p>test</p>';
-            expect(editor.find('.font-bold').length).toBe(1);
-            expect(editor.find('.font-btns').length).toBe(1);
+            expect(editor.find('.font-color').length).toBe(0);
         });
     });
 });
@@ -294,6 +264,13 @@ describe("按钮点击模拟", function() {
     });
 });
 describe("文本解码", function() {
+    beforeEach(function(){
+        $('body').append('<textarea></textarea>');
+    });
+    afterEach(function(){
+        $('textarea').remove();
+        $('.ubb_editor_wrap').remove();
+    });
     it("todo", function() {
 
     });

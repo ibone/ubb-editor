@@ -13,20 +13,17 @@
         //var reg_pair_tag = /<[a-z]{1,6}[^<]+?<\/[a-z]{1,6}>/gi;
         //目前是使用John Resig写的一个html parse来处理配对
         
-        var allow_tag_name = {},
-            default_ubb_map = {
+        var allow_tag = {},
+            default_encode = {
                 'p'   : 'p',
                 'div' : 'p',
                 'br'  : 'br'
             },
-            toolbar = editor.get_config('toolbar'),
-            buttons = editor.buttons,
-            toolbar_length = toolbar.length;
+            buttons = editor.buttons;
             
-        $.extend(allow_tag_name,default_ubb_map);
-        for(var i = 0; i < toolbar_length; i++){
-            $.extend(allow_tag_name,buttons[toolbar[i]].allow_tag_name);
-            $.extend(default_ubb_map,buttons[toolbar[i]].ubb_map);
+        $.extend(allow_tag,default_encode);
+        for(var button in buttons){
+            $.extend(allow_tag, buttons[button].allow_tag);
         }
         
         var elements = [],
@@ -34,23 +31,22 @@
             ubb_text = '';
         html_parser( html, {
             start: function( node_name, attrs, unary ) {
-                var attr_name,ubb_tag,button;
-                if(!allow_tag_name[node_name]){
+                var attr_name,ubb_tag;
+                if(!allow_tag[node_name]){
                     return;
                 }
                 for ( var attr in attrs ){
                     attr_name = attrs[ attr ].name;
-                    for(i = 0; i < toolbar_length; i++){
-                        button = buttons[toolbar[i]];
-                        if(button.allow_attr === attr_name){
-                            ubb_tag = button.encode_ubb(attrs[attr].value);
+                    for(var button in buttons){
+                        if(buttons[button].ubb_attr === attr_name){
+                            ubb_tag = buttons[button].encode_ubb(attrs[attr].value);
                             break;
                         }
                     }
                 }
                 if(!ubb_tag){
                     ubb_tag = {
-                        node_name : default_ubb_map[node_name],
+                        node_name : default_encode[node_name],
                         node_attr : ''
                     };
                 }

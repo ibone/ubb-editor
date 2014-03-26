@@ -68,7 +68,7 @@
                             size = $font.attr('size');
                             px = size_map[size];
                             if (px) {
-                                $font.removeAttr('size').css('font-size',px).attr(self.allow_attr,size);
+                                $font.removeAttr('size').css('font-size',px).attr(self.ubb_attr,size);
                             }
                         }
                     };
@@ -89,16 +89,16 @@
                 decode_ubb : function(editor){
                     var ubb_map = {};
                     for (var i = 0; i < size.length; i++) {
-                        ubb_map['[font' + size[i].val + ']'] = '<font '+ this.allow_attr +'="'+ size[i].val +'" style="font-size:' + size[i].px + '">';
+                        ubb_map['[font' + size[i].val + ']'] = '<font '+ this.ubb_attr +'="'+ size[i].val +'" style="font-size:' + size[i].px + '">';
                     }
                     ubb_map['[/font]'] = '</font>';
                     return ubb_map;
                 },
-                allow_tag_name : {
+                allow_tag : {
                     'font'  : true,
                     'span' : true
                 },
-                allow_attr : 'ubb-size'
+                ubb_attr : 'ubb-size'
             }
         );
     });

@@ -63,13 +63,12 @@ $.ubb_editor.plugin('btn_link',function(editor){
                     '[end]'    : '>'
                 };
             },
-            allow_tag_name : {
+            allow_tag : {
                 'a'  : true
             },
-            //有一些属性也可以不使用ubb前缀，比如href，它的属性输出形式就一种 href="xxx.com"
+            //有一些属性也可以不使用ubb前缀，比如href，它的属性输出形式 [tagend]href="xxx.com"[end]text[/tag]
             //凡是不能通过配置来控制其属性值的属性，其属性名和值都必须被'end]'和'[end'包裹,直接输出在ubb标签中，比如a标签
-            //大的规则从来都是被小的规则逼出来的
-            allow_attr : 'href'
+            ubb_attr : 'href'
         }
     );
 });

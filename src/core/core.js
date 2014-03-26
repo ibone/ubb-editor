@@ -1,5 +1,5 @@
     var default_config = {
-        toolbar : ['bold', 'color', 'size', 'link'],//负责按钮排序和显示
+        toolbar : [],//负责按钮排序和显示
         height : 150,
         plugin : {}//插件的配置
     };
@@ -67,8 +67,8 @@
             var editor = {
                 id : 'ubb_editor' + id,
                 $textarea : $(this),
-                config : $.extend({}, default_config, config),
-                buttons : {}
+                config : $.extend(true, {}, default_config, config),
+                buttons : []
             }
             api(editor);
             init(editor);
@@ -102,7 +102,7 @@
         var loaded_disabled_plugins = [];//已加载但失效的插件列表 {require:false}
         var plugins = $.ubb_editor.plugins;
         var plugins_length = plugins.length;
-        var limit = 100;//while经常会发生未预期的死循环，加一个上限避免，很期待插件多达100以上的时候哦^-^
+        var limit = 100;//while经常会发生未预期的死循环，加一个循环上限
         while(
             limit > 0
             && loaded_plugins.length !== plugins_length

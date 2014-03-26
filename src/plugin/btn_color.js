@@ -147,7 +147,7 @@
                             if(!color_map[style_color]){
                                 continue;
                             }
-                            $font.attr(self.allow_attr,style_color);
+                            $font.attr(self.ubb_attr,style_color);
                         }
                     };
                     var command_color = $(target_button).data('color');
@@ -167,18 +167,18 @@
                 decode_ubb : function(){
                     var ubb_map = {};
                     for (var i = 0; i < color.length; i++) {
-                        ubb_map['[font' + color[i].val.replace('#','') + ']'] = '<font ' + this.allow_attr + '="'+ color[i].val +'" style="color:' + color[i].val + '">';
+                        ubb_map['[font' + color[i].val.replace('#','') + ']'] = '<font ' + this.ubb_attr + '="'+ color[i].val +'" style="color:' + color[i].val + '">';
                     }
                     ubb_map['[/font]'] = '</font>';
                     return ubb_map;
                 },
-                allow_tag_name : {
+                allow_tag : {
                     'font'  : true,
                     'span' : true
                 },
                 //ubb的属性是用来统一和控制样式格式输出
-                //比如style="color:rgb(11,11,11)"或者color="rgb(11,11,11)"
-                allow_attr : 'ubb-color'
+                //比如style="color:rgb(11,11,11)"或者color="rgb(11,11,11)"这样不一致的写法
+                ubb_attr : 'ubb-color'
             }
         );
     });
