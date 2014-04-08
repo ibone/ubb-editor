@@ -55,7 +55,7 @@ function api(editor){
         this.iframe.contentWindow.focus();
     };
     
-    editor.add_button = function(button){
+    editor.add_button = function(button,require){
         this.buttons[button.name] = button;
         this.buttons[this.buttons.length] = button;
     };
@@ -64,7 +64,10 @@ function api(editor){
         this.hide_panel();;
         this.document.execCommand(command, false, value);
         this.focus();
-        this.fire('content_change');
+        //编辑命令执行完毕后，会有一些附带的过滤行为，比如添加ubb属性，所以要缓后执行content_change事件
+        setTimeout(function(){
+            editor.fire('content_change');
+        },1)
     };
     
     editor.hide_panel = function() {

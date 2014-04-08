@@ -9,10 +9,10 @@ $.ubb_editor.plugin('toolbar',function(editor){
             button_name = $button.data('name'),
             button = editor.buttons[button_name];
             
-        button[button_type](editor,this);
+        button[button_type](this);
         
         if(button_type = 'exec' && button.onselected){
-            button.onselected(editor, editor.get_selected_container());
+            button.onselected(editor.get_selected_container());
         }
     });
     editor.$toolbar.on("click", function (event) {
@@ -28,7 +28,9 @@ $.ubb_editor.plugin('toolbar',function(editor){
         //如果工具栏未配置，则按照按钮插件加载顺序来显示和排序
         if(toolbar&&toolbar.length === 0){
             for(var i = 0; i < editor.buttons.length; i++){
-                toolbar.push(editor.buttons[i].name);
+                if(editor.buttons[i].require){
+                    toolbar.push(editor.buttons[i].name);
+                }
             }
         }
         $.each(toolbar, function (i, name) {

@@ -1,8 +1,10 @@
 $.ubb_editor.plugin('btn_bold',function(editor){
+    var plugin_config = editor.get_plugin_config('btn_bold');
     editor.add_button(
         {
             name : 'bold',
-            exec : function (editor) {
+            require : plugin_config.require,
+            exec : function () {
                 var add_ubb_attr = function() {
                     var fonts = $(editor.document).find("strong,b");
                     var $font;
@@ -14,7 +16,7 @@ $.ubb_editor.plugin('btn_bold',function(editor){
                 editor.exec_command('bold', '');
                 add_ubb_attr();
             },
-            onselected : function (editor,selection_container) {
+            onselected : function (selection_container) {
                 var val = $(selection_container).css('font-weight');
                 var $button = editor.find('.font-bold a');
                 if (val === 'bold' || val+'' === '700') {
@@ -26,27 +28,31 @@ $.ubb_editor.plugin('btn_bold',function(editor){
             html :  '<div class="font-btns font-bold">'+
                         '<a href="javascript:;" data-onclick="exec" data-name="bold" title="粗体" unselectable="on">粗体</a>'+
                     '</div>',
-            encode_ubb : function(attr_value){
-                if(attr_value){
-                    return {
-                        node_name : 'b',
-                        node_attr : ''
-                    };
-                }else{
-                    return {};
+            encode_ubb : function(){
+                return {
+                    ubb_text : '[b]',
+                    node_name : 'b'
                 }
             },
-            decode_ubb : function(editor){
+            display : function($dom){
+                var self;
+                if(!this.require){
+                    $dom.find('strong').each(function(){
+                        self = $(this);
+                        self.after(self.text()).remove();
+                    });
+                }
+            },
+            decode_ubb : function(){
                 return {
-                    '[b]'  : '<strong ubb-weight="bold">',
+                    '[b]'  : '<strong>',
                     '[/b]' : '</strong>'
                 };
             },
             allow_tag : {
                 'b'  : true,
                 'strong' : true
-            },
-            ubb_attr : 'ubb-weight'
+            }
         }
     );
 });

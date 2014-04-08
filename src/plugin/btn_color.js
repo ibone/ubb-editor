@@ -90,7 +90,8 @@
         editor.add_button(
             {
                 name : 'color',
-                show_panel : function (editor) {
+                require : plugin_config.require,
+                show_panel : function () {
                     var length = color.length;
                     if (editor.find('.ubb_color_panel').length === 0) {
                         var html = '<div class="ubb_color_panel">';
@@ -103,7 +104,7 @@
                         editor.toggle_panel('.ubb_color_panel');
                     }
                 },
-                onselected : function (editor,selection_container) {
+                onselected : function (selection_container) {
                     var cur_color = null;
                     var style_color = $(selection_container).css('color');
                     style_color = rgb_to_hex(style_color);
@@ -119,66 +120,83 @@
                                 '<span unselectable="on"><i unselectable="on"></i></span>'+
                             '</a>'+
                         '</div>',
-                exec : function (editor, target_button) {
-                    var self = this;
+                set_ubb_attr : function(){
                     var reg_rgb = /rgb/i;
                     var reg_hex = /#[a-f0-9]{3,6}/i;
-                    
-                    var change_font = function() {
-                        var fonts = $(editor.document).find("font,span");
-                        var $font,style_color,attr_color;
-                        for (var i = 0, len = fonts.length; i < len; i++) {
-                            $font = fonts.eq(i);
-                            style_color = $font.css('color');
-                            if(reg_rgb.test(style_color)){
-                                style_color = rgb_to_hex(style_color);
-                            }
-                            //默认颜色不加颜色属性
-                            if(style_color === plugin_config.default_color){
-                                continue;
-                            }
-                            attr_color = $font.attr('style');
-                            if(!reg_rgb.test(attr_color) && !reg_hex.test(attr_color)){
-                                attr_color = $font.attr('color');
-                                if(!reg_rgb.test(attr_color) && !reg_hex.test(attr_color)){
-                                    continue;
-                                }
-                            }
-                            if(!color_map[style_color]){
-                                continue;
-                            }
-                            $font.attr(self.ubb_attr,style_color);
+                    var fonts = $(editor.document).find("font,span");
+                    var $font,style_color,attr_color;
+                    for (var i = 0, len = fonts.length; i < len; i++) {
+                        $font = fonts.eq(i);
+                        style_color = $font.css('color');
+                        if(reg_rgb.test(style_color)){
+                            style_color = rgb_to_hex(style_color);
                         }
-                    };
-                    var command_color = $(target_button).data('color');
-                    editor.exec_command("forecolor", command_color);
-                    change_font();
-                },
-                encode_ubb : function(attr_value){
-                    if(attr_value){
-                        return {
-                            node_name : 'font',
-                            node_attr : attr_value.replace('#','')
-                        };
-                    }else{
-                        return {};
+                        //默认颜色不加颜色属性
+                        if(style_color === plugin_config.default_color){
+                            continue;
+                        }
+                        attr_color = $font.attr('style');
+                        if(!reg_rgb.test(attr_color) && !reg_hex.test(attr_color)){
+                            attr_color = $font.attr('color');
+                            if(!reg_rgb.test(attr_color) && !reg_hex.test(attr_color)){
+                                continue;
+                            }
+                        }
+                        if(!color_map[style_color]){
+                            continue;
+                        }
+                        //ubb的属性是用来统一和控制样式格式输出
+                        //比如style="color:rgb(11,11,11)"或者color="rgb(11,11,11)"这样不一致的写法
+                        //在encode和decode的时候，只通过ubb属性来输入和输出代码
+                        $font.attr('ubb-color',style_color);
                     }
+                },
+                exec : function (target_button) {
+                    editor.exec_command("forecolor", $(target_button).data('color'));
+                    this.set_ubb_attr();
+                },
+                display : function($dom){
+                    var attr_name = 'ubb-color';
+                    var self,attr_val;
+                    if(this.require){
+                        $dom.find('font').each(function(){
+                            self = $(this);
+                            attr_val = self.attr('ubb-color');
+                            if(color_map[attr_val]){
+                                self.css('color',attr_val);
+                            }
+                        });
+                    }
+                },
+                encode_ubb : function(attrs,encode_ubb_result){
+                    if(!encode_ubb_result){
+                        encode_ubb_result = {};
+                    }
+                    $.each(attrs,function(i,attr){
+                        if(attr.name === 'ubb-color'){
+                            if(encode_ubb_result.ubb_text){
+                                encode_ubb_result.ubb_text = encode_ubb_result.ubb_text.replace('[end]','[color]'+attr.val+'[/color][end]');
+                            }else{
+                                encode_ubb_result.ubb_text = '[font][color]'+attr.value+'[/color][end]';
+                                encode_ubb_result.node_name = 'font';
+                            }
+                            return false;
+                        }
+                    });
+                    return encode_ubb_result;
                 },
                 decode_ubb : function(){
-                    var ubb_map = {};
-                    for (var i = 0; i < color.length; i++) {
-                        ubb_map['[font' + color[i].val.replace('#','') + ']'] = '<font ' + this.ubb_attr + '="'+ color[i].val +'" style="color:' + color[i].val + '">';
-                    }
-                    ubb_map['[/font]'] = '</font>';
-                    return ubb_map;
+                    return {
+                        '[/font]'  : '</font>',
+                        '[font]'   : '<font',
+                        '[color]'  : ' ubb-color="',
+                        '[/color]' : '"'
+                    };
                 },
                 allow_tag : {
-                    'font'  : true,
+                    'font' : true,
                     'span' : true
-                },
-                //ubb的属性是用来统一和控制样式格式输出
-                //比如style="color:rgb(11,11,11)"或者color="rgb(11,11,11)"这样不一致的写法
-                ubb_attr : 'ubb-color'
+                }
             }
         );
     });

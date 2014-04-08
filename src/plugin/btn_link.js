@@ -1,9 +1,11 @@
 $.ubb_editor.plugin('btn_link',function(editor){
     var old_range = null;
+    var plugin_config = editor.get_plugin_config('btn_link');
     editor.add_button(
         {
             name : 'link',
-            show_panel : function(editor){
+            require : plugin_config.require,
+            show_panel : function(){
                 if(editor.msie){
                     old_range = editor.get_range();
                 }
@@ -26,7 +28,7 @@ $.ubb_editor.plugin('btn_link',function(editor){
             html :  '<div class="font-btns font-link">'+
                         '<a href="javascript:;" data-onclick="show_panel" data-name="link" title="链接" unselectable="on">链接</a>'+
                     '</div>',
-            exec : function (editor) {
+            exec : function () {
                 if(editor.msie){
                     editor.focus();
                     editor.restore_range(old_range);
@@ -46,29 +48,37 @@ $.ubb_editor.plugin('btn_link',function(editor){
                 /* 如果需要给链接添加target title
                 */
             },
-            encode_ubb : function(attr_value){
-                if(attr_value){
-                    return {
-                        node_name : 'a',
-                        node_attr : 'end]href="' + attr_value + '"[end'
-                    };
-                }else{
-                    return {};
+            encode_ubb : function(attrs){
+                var encode_ubb_result = {};
+                $.each(attrs,function(i,attr){
+                    if(attr.name === 'href'){
+                        encode_ubb_result.ubb_text = '[a][href]'+attr.value+'[/href][end]';
+                        encode_ubb_result.node_name = 'a';
+                        return false;
+                    }
+                })
+                return encode_ubb_result;
+            },
+            display : function($dom){
+                var self;
+                if(!this.require){
+                    $dom.find('a').each(function(){
+                        self = $(this);
+                        self.after(self.text()).remove();
+                    });
                 }
             },
             decode_ubb : function(){
                 return {
-                    '[aend]'  : '<a ',
+                    '[a]'     : '<a ',
                     '[/a]'    : '</a>',
-                    '[end]'    : '>'
+                    '[href]'  : ' href="',
+                    '[/href]' : '"'
                 };
             },
             allow_tag : {
                 'a'  : true
-            },
-            //有一些属性也可以不使用ubb前缀，比如href，它的属性输出形式 [tagend]href="xxx.com"[end]text[/tag]
-            //凡是不能通过配置来控制其属性值的属性，其属性名和值都必须被'end]'和'[end'包裹,直接输出在ubb标签中，比如a标签
-            ubb_attr : 'href'
+            }
         }
     );
 });

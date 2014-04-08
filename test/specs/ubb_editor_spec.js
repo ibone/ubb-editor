@@ -29,7 +29,7 @@ describe("标签编码", function() {
     it("包含href属性", function() {
         $('textarea').ubb_editor(function(editor){
             editor.document.body.innerHTML = '<A href="http://google.com/">google.com</a>';
-            expect(editor.html_to_ubb()).toBe('[aend]href="http://google.com/"[end]google.com[/a]');
+            expect(editor.html_to_ubb()).toBe('[a][href]http://google.com/[/href][end]google.com[/a]');
             //ie中会补全链接尾部，添加一个'/'
         });
     });
@@ -44,13 +44,19 @@ describe("标签编码", function() {
     it("标签font编码:color", function() {
         $('textarea').ubb_editor(function(editor){
             editor.document.body.innerHTML = '<font ubb-color="000000">test</font>';
-            expect(editor.html_to_ubb()).toBe('[font000000]test[/font]');
+            expect(editor.html_to_ubb()).toBe('[font][color]000000[/color][end]test[/font]');
         });
     });
     it("标签font编码:size", function() {
         $('textarea').ubb_editor(function(editor){
             editor.document.body.innerHTML = '<font ubb-size="3">test</font>';
-            expect(editor.html_to_ubb()).toBe('[font3]test[/font]');
+            expect(editor.html_to_ubb()).toBe('[font][size]3[/size][end]test[/font]');
+        });
+    });
+    it("标签font编码:混合size color", function() {
+        $('textarea').ubb_editor(function(editor){
+            editor.document.body.innerHTML = '<font ubb-size="3" ubb-color="000000">test</font>';
+            expect(editor.html_to_ubb()).toBe('[font][color]000000[/color][size]3[/size][end]test[/font]');
         });
     });
     //默认
@@ -105,7 +111,7 @@ describe("文本选中反馈", function() {
         $('textarea').remove();
         $('.ubb_editor_wrap').remove();
     });
-    it("选中颜色反馈", function() {
+    it("颜色", function() {
         $('textarea').ubb_editor(function(editor){
             editor.document.body.innerHTML = '<font style="color:#77cc33">test</font><font style="color:#77CC32">test</font>';
             editor.move_cursor(2);
@@ -117,7 +123,7 @@ describe("文本选中反馈", function() {
             expect(editor.find('.font-color i').data('color')).toBe('#000000');
         });
     });
-    it("选中字号反馈", function() {
+    it("字号", function() {
         $('textarea').ubb_editor(function(editor){
             editor.document.body.innerHTML = '<font style="font-size:16px;">test</font><font style="font-size:20px;">test</font>';
             editor.move_cursor(2);
@@ -130,7 +136,7 @@ describe("文本选中反馈", function() {
             expect(editor.find('.font-size a').text()).toBe('小号字体');
         });
     });
-    it("选中粗体反馈", function() {
+    it("粗体", function() {
         $('textarea').ubb_editor(function(editor){
             editor.document.body.innerHTML = '<b>test</b><strong>test</strong><font style="font-weight:bold;">test</font><font style="font-weight:700;">test</font><font>test</font>';
             editor.move_cursor(2);
@@ -173,7 +179,7 @@ describe("ubb属性", function() {
                 editor.buttons.size.exec(editor,editor.find('.ubb_size_panel a')[0]);
                 jasmine.log(editor.document.body.innerHTML);
                 var html = editor.document.body.innerHTML;
-                expect(editor.html_to_ubb()).toBe('[fontbb0000]te[font3]st[/font][/font]');
+                expect($(editor.document.body).find('font').eq(1).attr('ubb-color')).toBeUndefined();
             });
         });
     });
@@ -216,7 +222,7 @@ describe("按钮点击模拟", function() {
         $('textarea').remove();
         $('.ubb_editor_wrap').remove();
     });
-    it("加粗按钮正常", function() {
+    it("加粗", function() {
         $('textarea').ubb_editor(function(editor){
             editor.document.body.innerHTML = 'test';
             editor.focus();
@@ -229,7 +235,7 @@ describe("按钮点击模拟", function() {
             expect(editor.find('.font-bold a').hasClass('on')).toBe(false);
         });
     });
-    it("颜色按钮正常", function() {
+    it("颜色", function() {
         $('textarea').ubb_editor(function(editor){
             editor.document.body.innerHTML = 'test';
             editor.focus();
@@ -239,7 +245,7 @@ describe("按钮点击模拟", function() {
             expect(/ubb\-color=\"#bb0000\"/i.test(editor.document.body.innerHTML)).toBe(true);
         });
     });
-    it("字号按钮正常", function() {
+    it("字号", function() {
         $('textarea').ubb_editor(function(editor){
             editor.document.body.innerHTML = 'test';
             editor.focus();
@@ -249,7 +255,7 @@ describe("按钮点击模拟", function() {
             expect(/ubb\-size=\"4\"/i.test(editor.document.body.innerHTML)).toBe(true);
         });
     });
-    it("链接按钮正常", function() {
+    it("链接", function() {
         $('textarea').ubb_editor(function(editor){
             editor.document.body.innerHTML = 'test';
             editor.focus();
@@ -271,8 +277,75 @@ describe("文本解码", function() {
         $('textarea').remove();
         $('.ubb_editor_wrap').remove();
     });
-    it("todo", function() {
-
+    it("color属性", function() {
+        $('textarea').ubb_editor(function(editor){
+            var html = '[font][color]#666666[/color][end]sfsf[/font]';
+            expect(editor.ubb_to_html(html).toLowerCase()).toMatch('color\:');
+        });
+    });
+    it("size属性", function() {
+        $('textarea').ubb_editor(function(editor){
+            var html = '[font][size]4[/size][end]sfsf[/font]';
+            expect(editor.ubb_to_html(html)).toMatch('18px');
+        });
+    });
+    it("粗体属性", function() {
+        $('textarea').ubb_editor(function(editor){
+            var html = '[b]sfsf[/b]';
+            expect(editor.ubb_to_html(html)).toLowerCase('<strong>sfsf</strong>');
+        });
+    });
+    it("链接属性", function() {
+        $('textarea').ubb_editor(function(editor){
+            var html = '[a][href]http://google.com/[/href][end]google.com[/a]';
+            expect(editor.ubb_to_html(html)).toLowerCase('<a href="http://google.com/">google.com</a>');
+        });
+    });
+    it("只解码已配置属性", function() {
+        $('textarea').ubb_editor(function(editor){
+            var html = '[font][color]#666333[/color][end]sfsf[/font]';
+            expect(editor.ubb_to_html(html)).toLowerCase('<font ubb-color="#666333">sfsf</font>');
+        });
+    });
+    it("按钮失效的情况下，无颜色", function() {
+        $('textarea').ubb_editor({
+            plugin:{
+                btn_color:{require:false}
+            }
+        },function(editor){
+            var html = '[font][color]#666666[/color][end]sfsf[/font]';
+            expect(editor.ubb_to_html(html)).toLowerCase('<font ubb-color="#666666">sfsf</font>');
+        });
+    });
+    it("按钮失效的情况下，无大小", function() {
+        $('textarea').ubb_editor({
+            plugin:{
+                btn_size:{require:false}
+            }
+        },function(editor){
+            var html = '[font][size]4[/size][end]sfsf[/font]';
+            expect(editor.ubb_to_html(html)).toLowerCase('<font ubb-size="4">sfsf</font>');
+        });
+    });
+    it("按钮失效的情况下，无粗体", function() {
+        $('textarea').ubb_editor({
+            plugin:{
+                btn_bold:{require:false}
+            }
+        },function(editor){
+            var html = '[b]sfsf[/b]';
+            expect(editor.ubb_to_html(html)).toLowerCase('sfsf');
+        });
+    });
+    it("按钮失效的情况下，无链接", function() {
+        $('textarea').ubb_editor({
+            plugin:{
+                btn_link:{require:false}
+            }
+        },function(editor){
+            var html = '[a][href]http://baidu.com/[/href][end]sfsf[/a]';
+            expect(editor.ubb_to_html(html)).toLowerCase('sfsf');
+        });
     });
 });
 describe("HTML格式清除", function() {

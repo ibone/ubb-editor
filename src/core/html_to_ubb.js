@@ -11,8 +11,12 @@
         
         //以下是一个有缺陷的正则，用来匹配配对标签，但遇到<img src="xxx.com"></a>这样会匹配成功
         //var reg_pair_tag = /<[a-z]{1,6}[^<]+?<\/[a-z]{1,6}>/gi;
-        //目前是使用John Resig写的一个html parse来处理配对
+        //目前是使用John Resig写的html parse来处理配对
         
+        //标签和属性分离
+        //<font color="#bb0000">text</font> : [font][color]#bb0000[/color][end]text[/font]
+        //[font][color]#bb0000[/color][end]text[/font] : <font ubb-color="#bb0000">text</font>
+        //然后通过配置来处理ubb属性 是否需要解析成 ubb-color="#bb0000" : style="color:#bb0000"
         var allow_tag = {},
             default_encode = {
                 'p'   : 'p',
@@ -22,8 +26,8 @@
             buttons = editor.buttons;
             
         $.extend(allow_tag,default_encode);
-        for(var button in buttons){
-            $.extend(allow_tag, buttons[button].allow_tag);
+        for(var i = 0; i < buttons.length; i++){
+            $.extend(allow_tag, buttons[i].allow_tag);
         }
         
         var elements = [],
@@ -31,35 +35,30 @@
             ubb_text = '';
         html_parser( html, {
             start: function( node_name, attrs, unary ) {
-                var attr_name,ubb_tag;
+                var attr_name,ubb_tag,encode_ubb_result={};
                 if(!allow_tag[node_name]){
                     return;
                 }
-                for ( var attr in attrs ){
-                    attr_name = attrs[ attr ].name;
-                    for(var button in buttons){
-                        if(buttons[button].ubb_attr === attr_name){
-                            ubb_tag = buttons[button].encode_ubb(attrs[attr].value);
-                            break;
+                if(default_encode[node_name]){
+                    encode_ubb_result.ubb_text = '['+default_encode[node_name]+']';
+                    encode_ubb_result.node_name = default_encode[node_name];
+                }else{
+                    for(var i = 0; i < buttons.length; i++){
+                        if(buttons[i].allow_tag[node_name]){
+                            encode_ubb_result = buttons[i].encode_ubb(attrs,encode_ubb_result);
                         }
                     }
                 }
-                if(!ubb_tag){
-                    ubb_tag = {
-                        node_name : default_encode[node_name],
-                        node_attr : ''
-                    };
-                }
                 //判断当前标签是否被编译,如果没有,则关联结尾的标签将清除
-                if(ubb_tag.node_name){
+                if(encode_ubb_result.ubb_text){
                     cur_parent_node_be_used = true;
-                    ubb_text += '[' + ubb_tag.node_name + ubb_tag.node_attr + ']';
+                    ubb_text += encode_ubb_result.ubb_text;
                 }else{
                     cur_parent_node_be_used = false;
                 }
                 if ( !unary ) {
                     elements.push({
-                        node_name : ubb_tag.node_name,
+                        node_name : encode_ubb_result.node_name,
                         be_used   : cur_parent_node_be_used
                     });
                 }

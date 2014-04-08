@@ -1256,6 +1256,14 @@ jasmine.Matchers.prototype.toBe = function(expected) {
 };
 
 /**
+ * toLowerCase
+ * @param expected
+ */
+jasmine.Matchers.prototype.toLowerCase = function(expected) {
+  return this.actual.toLowerCase() === expected;
+};
+
+/**
  * toNotBe: compares the actual to the expected using !==
  * @param expected
  * @deprecated as of 1.0. Use not.toBe() instead.

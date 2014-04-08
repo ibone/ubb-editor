@@ -43,7 +43,7 @@ $.ubb_editor.plugin('edit',function(editor){
         var selected_container = editor.get_selected_container(event);
         if(selected_container){
             for (var i in editor.onselected) {
-                editor.onselected[i](editor, selected_container);
+                editor.onselected[i](selected_container);
             }
         }
     }

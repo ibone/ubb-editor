@@ -27,7 +27,6 @@ module.exports = function (grunt) {
                 src: [
                     'src/core/intro.js',
                     'src/core/core.js',
-                    'src/core/key_map.js',
                     'src/core/ubb_to_html.js',
                     'src/core/html_parser.js',
                     'src/core/iframe.js',

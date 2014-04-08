@@ -1,6 +1,6 @@
     var default_config = {
-        toolbar : [],//负责按钮排序和显示
-        height : 150,
+        toolbar : [],//按钮排序和显示
+        height : 150,//编辑器内容区高度
         plugin : {}//插件的配置
     };
     
@@ -69,7 +69,7 @@
                 $textarea : $(this),
                 config : $.extend(true, {}, default_config, config),
                 buttons : []
-            }
+            };
             api(editor);
             init(editor);
             fn(editor);
@@ -87,22 +87,21 @@
                        '</div>'+
                    '</div>';
         editor.$textarea.after(html).hide();
-        editor.$root = $("#" + editor.id);
-        editor.iframe = editor.find('iframe')[0];
-        editor.document = editor.get_document(editor.iframe);
-        editor.$toolbar = editor.find('.ubb_editor_toolbar');
-
-        //初始化iframe内容
-        init_iframe(editor.iframe);
-        editor.$iframe = $(editor.iframe);
+        editor.$root     = $("#" + editor.id);
+        editor.iframe    = editor.find('iframe')[0];
+        editor.document  = editor.get_document(editor.iframe);
+        editor.$iframe   = $(editor.iframe);
         editor.$document = $(editor.document);
+        editor.$toolbar  = editor.find('.ubb_editor_toolbar');
+        init_iframe(editor.iframe);
         
-        //按依赖执行插件
-        var loaded_plugins = [];//已加载插件列表
-        var loaded_disabled_plugins = [];//已加载但失效的插件列表 {require:false}
+        //已加载插件列表
+        var loaded_plugins = [];
+        //已加载但失效的插件列表 {require:false}
+        var loaded_disabled_plugins = [];
         var plugins = $.ubb_editor.plugins;
         var plugins_length = plugins.length;
-        var limit = 100;//while经常会发生未预期的死循环，加一个循环上限
+        var limit = 100;//加一个while循环上限
         while(
             limit > 0
             && loaded_plugins.length !== plugins_length
@@ -120,14 +119,20 @@
                     loaded_plugins.push(plugin.name);
                     var plugin_config = editor.get_plugin_config(plugin.name);
                     if( 
-                        //是否需要
+                        //是否需要安装
                         plugin_config.require 
+                        //require配置不是简单的执行或不执行插件的一个开关
+                        //比如编辑器之前颜色按钮并且输入了[color]属性标签，但在输出的时候，颜色插件被关闭{require:false}，
+                        //考虑到要对以往的数据内容和交互负责，保持内容基本可用，就需要对[color]做过滤，不能让它暴露出来。
+                        //所以即便require为false也要执行插件，并且让插件知道用户不需要你了，之前做的事情要擦干净。
                         //依赖列表和失效列表没有交集
-                        //如果有A插件依赖B插件，而B插件在失效列表中,则A插件也不执行,同时放入失效列表中
+                        //如果有A插件依赖B插件，而B插件在失效列表中,则A插件的require配置改为false,同时放入失效列表中
                         && !has_intersec(plugin.depend, loaded_disabled_plugins)
                     ){
                         plugin.fn( editor );
                     }else{
+                        plugin.fn( editor );
+                        plugin_config.require = false;
                         loaded_disabled_plugins.push(plugin.name);
                     }
                 }
