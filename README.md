@@ -7,15 +7,14 @@ ubb-editor是类ubb代码格式的可视化编辑器，目的是将用户编辑�
     （可通过添加插件来增加更多功能）
 
 ######优点：
-    1.输出样式严格控制，编辑菜单上未出现的样式，不会输出
-    2.比较其他保存原代码的编辑器，保存内容更少
-    3.轻量（因为功能少）
-    4.单元测试（这个能当优点么）
+    1.输出样式严格控制
+    2.保存内容更少
+    4.安全性高
+    4.单元测试
     
 ######缺点：
     1.在输出的时候，需要对内容解码（前端和后端都行）
     2.文本编辑功能有限（功能太多的话，感觉ubb这样的模式就不适合了）
-    3.目前就我一个人在维护=。=
     
 ######兼容性： 
     IE 6-9
@@ -23,27 +22,24 @@ ubb-editor是类ubb代码格式的可视化编辑器，目的是将用户编辑�
     firefox
 
 ######保存的规则如下：
-        [font4][/font]
-        <font style="font-size:18px;"></font>
+        [font][size]4[/size][end]text[/font]
+        <font style="font-size:18px;">text</font>
         
-        [font666666][/font]
-        <font style="color:#666666;"></font>
+        [font][color]#666666[/color][end]text[/font]
+        <font style="color:#666666;">text</font>
     
-        [b][/b]
-        <strong></strong>
+        [b]text[/b]
+        <strong>text</strong>
     
-        [p][/p]
-        <p></p>
+        [p]text[/p]
+        <p>text</p>
     
-        [aend]href="example.com"[end][/a]
-        <a href="example.com"></a>
+        [a][href]http://example.com[/href][end]text[/a]
+        <a href="example.com">text</a>
     
         [br]
         <br/>
         ......
-        一个标签最多配一个属性
-        多个属性需要多个标签来表达
-        属性如果是自定义的，这需要当内容来处理，比如a标签
         
 ######使用：
     <textarea id="editor"></textarea>
