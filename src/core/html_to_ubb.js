@@ -24,6 +24,7 @@
                 'br'  : 'br'
             },
             buttons = editor.buttons;
+            buttons_length = buttons.length;
             
         $.extend(allow_tag,default_encode);
         for(var i = 0; i < buttons.length; i++){
@@ -43,7 +44,8 @@
                     encode_ubb_result.ubb_text = '['+default_encode[node_name]+']';
                     encode_ubb_result.node_name = default_encode[node_name];
                 }else{
-                    for(var i = 0; i < buttons.length; i++){
+                    for(var i = 0; i < buttons_length; i++){
+                        //首先判断节点标签是否符合去解析属性，然后依赖属性来判断是否要产生节点标签
                         if(buttons[i].allow_tag[node_name]){
                             encode_ubb_result = buttons[i].encode_ubb(attrs,encode_ubb_result);
                         }
