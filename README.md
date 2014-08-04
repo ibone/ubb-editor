@@ -1,4 +1,4 @@
-ubb-editor是在逛工作的时候，根据诸多需求定制出来的，目的是轻量、可控、安全、扩展性好、详细请看优点介绍，如果你发现了该编辑器的更多优点请来信告知^_^water2212683@gmail.com
+ubb-editor是在逛工作的时候，根据诸多需求定制出来的，目的是轻量、存储数据更少、可控、安全、扩展性好、详细请看优点介绍，如果你发现了该编辑器的更多优点请来信告知^_^ubb_editor@gmail.com
 ![Demo](https://github.com/ibone/ubb-editor/blob/master/readme/editor.png?raw=true)
 
 ######默认可编辑的样式
