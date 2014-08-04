@@ -72,12 +72,12 @@ $.ubb_editor.plugin('edit',function(editor){
             //不能直接获得粘贴内容，那么就移动光标到临时容器，通过临时容器来处理粘贴进来的文本
             //临时容器如果是div，那么复制进来的文本有div标签的话，chrome会设别是否需要在临时容器中做嵌套还是并列，这样临时容器的作用没了，不能让粘贴内容“跑出去”
             //所以用了table，一个万用型的标签，但有个缺点是内部必须有内容，才能确定range并编辑
-            tmp_container = editor.iframe_document.getElementById(tmp_container_id);
+            tmp_container = editor.document.getElementById(tmp_container_id);
             if(!tmp_container){
-                $(editor.iframe_document.body).append('<table id="'+tmp_container_id+'" style="left:-10000px;position:absolute;">'+
+                $(editor.document.body).append('<table id="'+tmp_container_id+'" style="left:-10000px;position:absolute;">'+
                                                           '<tr><td>' + tmp_data_start_text + tmp_data_end_text + '</td></tr>'+
                                                       '</table>'); 
-                tmp_container = editor.iframe_document.getElementById(tmp_container_id);
+                tmp_container = editor.document.getElementById(tmp_container_id);
             }
             old_range = editor.get_range();
             //ie中在复制之前改变粘贴的光标位置不会成功，而且使用旧的range会清除之前粘贴的文本
