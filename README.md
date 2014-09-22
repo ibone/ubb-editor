@@ -13,6 +13,7 @@ ubb-editor是在逛工作的时候，根据诸多需求定制出来的，目的�
     * 采用白名单标签模式，任何不可预估的会产生漏洞的标签都不会出现，包括未来的会出现的标签
     * 属性控制，非编辑器提供的属性都不可出现在终端，比如“onclick,onmouseover”之类...
     * 这里有完整的xss漏洞名单[cheatsheet](https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet)
+
 ######缺点：
 * 1.在输出的时候，需要对内容解码（前端和后端都可以解码）
 * 2.文本编辑功能有限（功能太多的话，感觉ubb这样的模式就不适合了）
